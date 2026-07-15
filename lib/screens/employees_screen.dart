@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/employee_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/employee.dart';
 
 class EmployeesScreen extends StatefulWidget {
@@ -65,20 +66,20 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     final password = _passwordController.text.trim();
 
     if (name.isEmpty || salaryText.isEmpty || username.isEmpty || password.isEmpty) {
-      _showMessage('⚠️ كل الحقول مطلوبة.');
+      _showMessage(S.t('err_all_fields_required'));
       return;
     }
 
     final salary = double.tryParse(salaryText);
     if (salary == null) {
-      _showMessage('⚠️ المرتب يجب أن يكون رقمًا.');
+      _showMessage(S.t('err_salary_must_be_number'));
       return;
     }
 
     try {
       if (_editingEmployeeId == null) {
         await EmployeeDAO.insert(name: name, salary: salary, username: username, password: password);
-        _showMessage('✔ تم توظيف $name');
+        _showMessage('${S.t('employee_hired_prefix')} $name');
       } else {
         await EmployeeDAO.update(
           id: _editingEmployeeId!,
@@ -87,12 +88,12 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
           username: username,
           password: password,
         );
-        _showMessage('✏ تم تعديل الموظف بنجاح.');
+        _showMessage(S.t('employee_updated'));
       }
       _resetForm();
       _refresh();
     } catch (e) {
-      _showMessage('❌ حدث خطأ أثناء العملية: $e');
+      _showMessage('${S.t('err_operation_prefix')} $e');
     }
   }
 
@@ -105,13 +106,13 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('تأكيد الحذف'),
-        content: Text('هل تريد حذف "${employee.name}"؟'),
+        title: Text(S.t('confirm_delete')),
+        content: Text('${S.t('confirm_delete_item_prefix')} "${employee.name}"?'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(S.t('cancel'))),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text(S.t('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -129,7 +130,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     final isEditing = _editingEmployeeId != null;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('👷‍♂️ إدارة الموظفين')),
+      appBar: AppBar(title: Text(S.t('employees_title'))),
       body: Column(
         children: [
           Padding(
@@ -138,23 +139,23 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
               children: [
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'اسم العامل', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: S.t('worker_name'), border: const OutlineInputBorder()),
                 ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _salaryController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(labelText: 'المرتب', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: S.t('salary'), border: const OutlineInputBorder()),
                 ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'اسم المستخدم', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: S.t('username'), border: const OutlineInputBorder()),
                 ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'كلمة السر', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: S.t('password'), border: const OutlineInputBorder()),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -168,12 +169,12 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                         ),
                         onPressed: _submit,
                         icon: Icon(isEditing ? Icons.save : Icons.person_add),
-                        label: Text(isEditing ? '💾 حفظ التعديل' : '➕ توظيف'),
+                        label: Text(isEditing ? S.t('save_edit') : S.t('hire')),
                       ),
                     ),
                     if (isEditing) ...[
                       const SizedBox(width: 10),
-                      OutlinedButton(onPressed: _resetForm, child: const Text('إلغاء')),
+                      OutlinedButton(onPressed: _resetForm, child: Text(S.t('cancel'))),
                     ],
                   ],
                 ),
@@ -190,7 +191,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                 }
                 final employees = snapshot.data ?? [];
                 if (employees.isEmpty) {
-                  return const Center(child: Text('لا يوجد موظفون بعد'));
+                  return Center(child: Text(S.t('no_employees_yet')));
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.all(12),
@@ -213,7 +214,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                                   ),
                                 ),
                                 Chip(
-                                  label: Text(employee.active ? 'مفعل' : 'معطل'),
+                                  label: Text(employee.active ? S.t('active') : S.t('inactive')),
                                   backgroundColor: employee.active
                                       ? Colors.green.shade100
                                       : Colors.red.shade100,
@@ -225,8 +226,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                               spacing: 16,
                               runSpacing: 4,
                               children: [
-                                Text('مرتب: ${employee.salary.toStringAsFixed(2)}'),
-                                Text('مستخدم: ${employee.username}'),
+                                Text('${S.t('salary_label')}: ${employee.salary.toStringAsFixed(2)}'),
+                                Text('${S.t('username_label')}: ${employee.username}'),
                               ],
                             ),
                             Row(
@@ -234,7 +235,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                               children: [
                                 TextButton(
                                   onPressed: () => _toggleActive(employee),
-                                  child: const Text('تفعيل/تعطيل'),
+                                  child: Text(S.t('toggle_active')),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.edit, color: Color(0xFF6D4C41)),

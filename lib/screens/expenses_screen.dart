@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/expense_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/expense.dart';
 import '../utils/app_session.dart';
 
@@ -42,7 +43,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   Future<void> _addExpense() async {
     final amount = double.tryParse(_amountController.text.trim());
     if (amount == null) {
-      _showMessage('❌ المبلغ غير صالح');
+      _showMessage(S.t('err_invalid_amount'));
       return;
     }
 
@@ -61,13 +62,15 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('تأكيد الحذف'),
-        content: Text('حذف مصروف #${expense.id} بقيمة ${expense.amount.toStringAsFixed(2)}؟'),
+        title: Text(S.t('confirm_delete')),
+        content: Text(
+          '${S.t('confirm_delete_expense_prefix')}${expense.id} ${S.t('confirm_delete_expense_value')} ${expense.amount.toStringAsFixed(2)}?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(S.t('cancel'))),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text(S.t('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -82,7 +85,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('💸 إدارة المصروفات')),
+      appBar: AppBar(title: Text(S.t('expenses_title'))),
       body: Column(
         children: [
           Padding(
@@ -95,14 +98,14 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                       child: TextField(
                         controller: _amountController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'المبلغ', border: OutlineInputBorder()),
+                        decoration: InputDecoration(labelText: S.t('amount'), border: const OutlineInputBorder()),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
                         controller: _noteController,
-                        decoration: const InputDecoration(labelText: 'ملاحظة', border: OutlineInputBorder()),
+                        decoration: InputDecoration(labelText: S.t('note'), border: const OutlineInputBorder()),
                       ),
                     ),
                   ],
@@ -118,7 +121,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                     ),
                     onPressed: _addExpense,
                     icon: const Icon(Icons.add),
-                    label: const Text('إضافة'),
+                    label: Text(S.t('add')),
                   ),
                 ),
               ],
@@ -134,7 +137,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 }
                 final expenses = snapshot.data ?? [];
                 if (expenses.isEmpty) {
-                  return const Center(child: Text('لا توجد مصروفات بعد'));
+                  return Center(child: Text(S.t('no_expenses_yet')));
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.all(12),
@@ -168,7 +171,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 padding: const EdgeInsets.all(14),
                 color: const Color(0xFFFFE0B2),
                 child: Text(
-                  '📊 إجمالي المصروفات: ${total.toStringAsFixed(2)}',
+                  '${S.t('total_expenses')}: ${total.toStringAsFixed(2)}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),

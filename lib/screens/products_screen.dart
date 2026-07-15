@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/product_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/product.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     final quantity = _isCups ? 0.0 : double.tryParse(_quantityController.text.trim());
 
     if (name.isEmpty || buyPrice == null || sellPrice == null || quantity == null) {
-      _showMessage('❌ تأكد من إدخال كل الحقول بشكل صحيح.');
+      _showMessage(S.t('err_fill_fields_correctly'));
       return;
     }
 
@@ -67,13 +68,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
     _buyPriceController.clear();
     _sellPriceController.clear();
     _quantityController.clear();
-    _showMessage('✔ تم إضافة المنتج');
+    _showMessage(S.t('product_added'));
     _refresh();
   }
 
   Future<void> _deleteProduct(Product product) async {
     await ProductDAO.delete(product.id);
-    _showMessage('✔ تم حذف المنتج');
+    _showMessage(S.t('product_deleted'));
     _refresh();
   }
 
@@ -102,19 +103,19 @@ class _ProductsScreenState extends State<ProductsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('تعديل المنتج', style: Theme.of(sheetContext).textTheme.titleLarge),
+                  Text(S.t('edit_product'), style: Theme.of(sheetContext).textTheme.titleLarge),
                   const SizedBox(height: 16),
                   TextField(
                     controller: nameController,
-                    decoration: const InputDecoration(labelText: 'الاسم', border: OutlineInputBorder()),
+                    decoration: InputDecoration(labelText: S.t('name'), border: const OutlineInputBorder()),
                   ),
                   const SizedBox(height: 10),
                   DropdownButtonFormField<String>(
                     value: type,
-                    decoration: const InputDecoration(labelText: 'النوع', border: OutlineInputBorder()),
-                    items: const [
-                      DropdownMenuItem(value: 'بن', child: Text('بن')),
-                      DropdownMenuItem(value: 'أكواب', child: Text('أكواب')),
+                    decoration: InputDecoration(labelText: S.t('type'), border: const OutlineInputBorder()),
+                    items: [
+                      DropdownMenuItem(value: 'بن', child: Text(S.t('type_beans'))),
+                      DropdownMenuItem(value: 'أكواب', child: Text(S.t('type_cups'))),
                     ],
                     onChanged: (value) => setSheetState(() => type = value ?? type),
                   ),
@@ -122,27 +123,27 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   TextField(
                     controller: buyController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'سعر الشراء', border: OutlineInputBorder()),
+                    decoration: InputDecoration(labelText: S.t('buy_price'), border: const OutlineInputBorder()),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: sellController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'سعر البيع', border: OutlineInputBorder()),
+                    decoration: InputDecoration(labelText: S.t('sell_price'), border: const OutlineInputBorder()),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: initQtyController,
                     enabled: !isCups,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'الكمية الأصلية', border: OutlineInputBorder()),
+                    decoration: InputDecoration(labelText: S.t('initial_quantity'), border: const OutlineInputBorder()),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: qtyController,
                     enabled: !isCups,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'الكمية المتبقية', border: OutlineInputBorder()),
+                    decoration: InputDecoration(labelText: S.t('remaining_quantity'), border: const OutlineInputBorder()),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
@@ -160,7 +161,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         final name = nameController.text.trim();
 
                         if (name.isEmpty || buyPrice == null || sellPrice == null || initQty == null || qty == null) {
-                          _showMessage('❌ خطأ أثناء التعديل: تأكد من الحقول');
+                          _showMessage(S.t('err_edit_fields'));
                           return;
                         }
 
@@ -177,7 +178,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         if (sheetContext.mounted) Navigator.of(sheetContext).pop();
                         _refresh();
                       },
-                      child: const Text('حفظ'),
+                      child: Text(S.t('save')),
                     ),
                   ),
                 ],
@@ -193,16 +194,16 @@ class _ProductsScreenState extends State<ProductsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('تأكيد الحذف'),
-        content: Text('هل تريد حذف "${product.name}"؟'),
+        title: Text(S.t('confirm_delete')),
+        content: Text('${S.t('confirm_delete_item_prefix')} "${product.name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('إلغاء'),
+            child: Text(S.t('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text(S.t('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -218,7 +219,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('📦 إدارة المنتجات')),
+      appBar: AppBar(title: Text(S.t('products_title'))),
       body: Column(
         children: [
           Padding(
@@ -227,15 +228,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
               children: [
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'اسم المنتج', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: S.t('product_name'), border: const OutlineInputBorder()),
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   value: _type,
-                  decoration: const InputDecoration(labelText: 'النوع', border: OutlineInputBorder()),
-                  items: const [
-                    DropdownMenuItem(value: 'بن', child: Text('بن')),
-                    DropdownMenuItem(value: 'أكواب', child: Text('أكواب')),
+                  decoration: InputDecoration(labelText: S.t('type'), border: const OutlineInputBorder()),
+                  items: [
+                    DropdownMenuItem(value: 'بن', child: Text(S.t('type_beans'))),
+                    DropdownMenuItem(value: 'أكواب', child: Text(S.t('type_cups'))),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -251,7 +252,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       child: TextField(
                         controller: _buyPriceController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'سعر الشراء', border: OutlineInputBorder()),
+                        decoration: InputDecoration(labelText: S.t('buy_price'), border: const OutlineInputBorder()),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -259,7 +260,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       child: TextField(
                         controller: _sellPriceController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'سعر البيع', border: OutlineInputBorder()),
+                        decoration: InputDecoration(labelText: S.t('sell_price'), border: const OutlineInputBorder()),
                       ),
                     ),
                   ],
@@ -269,7 +270,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   controller: _quantityController,
                   enabled: !_isCups,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(labelText: 'الكمية', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: S.t('quantity'), border: const OutlineInputBorder()),
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
@@ -282,7 +283,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     ),
                     onPressed: _addProduct,
                     icon: const Icon(Icons.add),
-                    label: const Text('إضافة'),
+                    label: Text(S.t('add')),
                   ),
                 ),
               ],
@@ -298,7 +299,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 }
                 final products = snapshot.data ?? [];
                 if (products.isEmpty) {
-                  return const Center(child: Text('لا توجد منتجات بعد'));
+                  return Center(child: Text(S.t('no_products_yet')));
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.all(12),
@@ -320,7 +321,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                                Chip(label: Text(product.type)),
+                                Chip(label: Text(S.productType(product.type))),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -328,14 +329,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               spacing: 16,
                               runSpacing: 4,
                               children: [
-                                Text('شراء: ${_fmt(product.buyPrice)}'),
-                                Text('بيع: ${_fmt(product.sellPrice)}'),
+                                Text('${S.t('buy_label')}: ${_fmt(product.buyPrice)}'),
+                                Text('${S.t('sell_label')}: ${_fmt(product.sellPrice)}'),
                                 if (!product.isCups) ...[
-                                  Text('متبقي: ${_fmt(product.quantity)}'),
-                                  Text('أصلي: ${_fmt(product.initialQuantity)}'),
-                                  Text('تكلفة: ${_fmt(product.costValue)}'),
-                                  Text('قيمة متبقية: ${_fmt(product.remainingValue)}'),
-                                  Text('قيمة مباعة: ${_fmt(product.soldValue)}'),
+                                  Text('${S.t('remaining_label')}: ${_fmt(product.quantity)}'),
+                                  Text('${S.t('initial_label')}: ${_fmt(product.initialQuantity)}'),
+                                  Text('${S.t('cost_label')}: ${_fmt(product.costValue)}'),
+                                  Text('${S.t('remaining_value_label')}: ${_fmt(product.remainingValue)}'),
+                                  Text('${S.t('sold_value_label')}: ${_fmt(product.soldValue)}'),
                                 ],
                               ],
                             ),

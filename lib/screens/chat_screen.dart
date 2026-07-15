@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/notes_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/chat_message.dart';
 import '../utils/app_session.dart';
 
@@ -68,7 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
                 final messages = snapshot.data ?? [];
                 if (messages.isEmpty) {
-                  return const Center(child: Text('لا توجد رسائل بعد'));
+                  return Center(child: Text(S.t('no_messages_yet')));
                 }
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (_scrollController.hasClients) {
@@ -115,9 +116,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'اكتب رسالتك هنا...',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: S.t('message_hint'),
+                        border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _send(),
                     ),

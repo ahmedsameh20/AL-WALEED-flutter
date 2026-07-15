@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/report_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/report_rows.dart';
 
 class SalesReportScreen extends StatefulWidget {
@@ -11,9 +12,9 @@ class SalesReportScreen extends StatefulWidget {
 }
 
 class _SalesReportScreenState extends State<SalesReportScreen> {
-  static const _periods = ['آخر ساعة', 'اليوم', 'آخر 7 أيام', 'آخر 30 يوم', 'آخر سنة'];
+  static const _periodKeys = ['hour', 'today', 'week', 'month', 'year'];
 
-  String _period = 'اليوم';
+  String _period = 'today';
   late Future<List<EmployeeSales>> _salesFuture;
 
   @override
@@ -22,19 +23,21 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
     _salesFuture = _load();
   }
 
+  String _periodLabel(String key) => S.t('period_$key');
+
   DateTime _since() {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     switch (_period) {
-      case 'آخر ساعة':
+      case 'hour':
         return now.subtract(const Duration(hours: 1));
-      case 'آخر 7 أيام':
+      case 'week':
         return today.subtract(const Duration(days: 7));
-      case 'آخر 30 يوم':
+      case 'month':
         return today.subtract(const Duration(days: 30));
-      case 'آخر سنة':
+      case 'year':
         return DateTime(now.year - 1, now.month, now.day);
-      case 'اليوم':
+      case 'today':
       default:
         return today;
     }
@@ -60,13 +63,13 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
           builder: (context, scrollController) {
             return Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text('📦 الكميات المباعة حسب المنتج', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(S.t('quantities_by_product'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
                 Expanded(
                   child: quantities.isEmpty
-                      ? const Center(child: Text('لا توجد بيانات'))
+                      ? Center(child: Text(S.t('no_data')))
                       : ListView.builder(
                           controller: scrollController,
                           itemCount: quantities.length,
@@ -90,15 +93,15 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('📈 تقرير المبيعات حسب الموظف')),
+      appBar: AppBar(title: Text(S.t('sales_report_title'))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
             child: DropdownButtonFormField<String>(
               value: _period,
-              decoration: const InputDecoration(labelText: 'الفترة', border: OutlineInputBorder()),
-              items: _periods.map((p) => DropdownMenuItem(value: p, child: Text(p))).toList(),
+              decoration: InputDecoration(labelText: S.t('period'), border: const OutlineInputBorder()),
+              items: _periodKeys.map((k) => DropdownMenuItem(value: k, child: Text(_periodLabel(k)))).toList(),
               onChanged: (value) {
                 setState(() => _period = value ?? _period);
                 _refresh();
@@ -114,7 +117,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                 }
                 final sales = snapshot.data ?? [];
                 if (sales.isEmpty) {
-                  return const Center(child: Text('لا توجد مبيعات في هذه الفترة'));
+                  return Center(child: Text(S.t('no_sales_in_period')));
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.all(12),
@@ -125,7 +128,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         title: Text(row.employeeName),
-                        subtitle: Text('عدد الفواتير: ${row.invoiceCount}'),
+                        subtitle: Text('${S.t('invoice_count_label')}: ${row.invoiceCount}'),
                         trailing: Text(
                           row.totalSales.toStringAsFixed(2),
                           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -144,7 +147,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
               child: OutlinedButton.icon(
                 onPressed: _showProductQuantities,
                 icon: const Icon(Icons.bar_chart),
-                label: const Text('📊 عرض الكميات المباعة'),
+                label: Text(S.t('show_quantities_sold')),
               ),
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/user_dao.dart';
+import '../l10n/app_strings.dart';
 import '../utils/app_session.dart';
 import 'owner_dashboard.dart';
 import 'seller_dashboard.dart';
@@ -32,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
 
     if (username.isEmpty || password.isEmpty) {
-      setState(() => _message = '⚠️ أدخل اسم المستخدم وكلمة السر');
+      setState(() => _message = S.t('err_enter_credentials'));
       return;
     }
 
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _loading = false);
 
     if (employee == null) {
-      setState(() => _message = '❌ بيانات غير صحيحة أو الحساب غير مفعل');
+      setState(() => _message = S.t('err_invalid_credentials'));
       return;
     }
 
@@ -75,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'تسجيل الدخول',
+                    S.t('login_title'),
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 20),
@@ -84,32 +85,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: (index) {
                       setState(() => _userType = index == 0 ? 'owner' : 'seller');
                     },
-                    children: const [
+                    children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Text('مدير'),
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(S.t('role_owner')),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Text('عامل'),
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(S.t('role_seller')),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'اسم المستخدم',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: S.t('username'),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'كلمة السر',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: S.t('password'),
+                      border: const OutlineInputBorder(),
                     ),
                     onSubmitted: (_) => _login(),
                   ),
@@ -132,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('تسجيل الدخول'),
+                          : Text(S.t('login_title')),
                     ),
                   ),
                   if (_message != null) ...[

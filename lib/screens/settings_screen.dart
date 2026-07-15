@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../db/settings_dao.dart';
+import '../l10n/app_strings.dart';
+import '../utils/app_session.dart';
+import 'owner_dashboard.dart';
+import 'seller_dashboard.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,22 +14,44 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  static const _sections = ['الفواتير', 'الطلبات', 'المنتجات', 'المصروفات'];
+  static const _sectionKeys = ['invoices', 'orders', 'products', 'expenses'];
 
-  String _selected = 'الفواتير';
+  String _selectedSection = 'invoices';
   String? _status;
 
+  String _sectionLabel(String key) => S.t('section_$key');
+
+  /// Language changes only trigger a rebuild of screens that are actively
+  /// listening (like this one). Screens already sitting lower in the
+  /// navigation stack (e.g. the dashboard behind this route) won't pick up
+  /// the new language until they're rebuilt, so we replace the whole stack
+  /// with a freshly-built dashboard whenever the language changes.
+  Future<void> _changeLanguage(String lang) async {
+    await LocaleController.instance.setLanguage(lang);
+    if (!mounted) return;
+    final isOwner = AppSession.instance.isOwner;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => isOwner ? const OwnerDashboard() : const SellerDashboard(),
+      ),
+      (route) => false,
+    );
+  }
+
   Future<void> _handleReset() async {
+    final sectionLabel = _sectionLabel(_selectedSection);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('تأكيد الحذف'),
-        content: Text('سيتم حذف كل بيانات "$_selected" نهائيًا. هل أنت متأكد؟'),
+        title: Text(S.t('confirm_delete')),
+        content: Text(
+          '${S.t('confirm_delete_section_prefix')} "$sectionLabel" ${S.t('confirm_delete_section_suffix')}',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(S.t('cancel'))),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('حذف', style: TextStyle(color: Colors.red)),
+            child: Text(S.t('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -33,26 +59,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (confirmed != true) return;
 
-    await SettingsDAO.resetSection(_selected);
-    setState(() => _status = '✅ تم حذف بيانات $_selected بنجاح.');
+    await SettingsDAO.resetSection(_selectedSection);
+    setState(() => _status = '${S.t('section_deleted_prefix')} $sectionLabel ${S.t('section_deleted_suffix')}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('⚙️ الإعدادات')),
+      appBar: AppBar(title: Text(S.t('settings_title'))),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('اختر القسم:'),
+            Text(S.t('language'), style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            AnimatedBuilder(
+              animation: LocaleController.instance,
+              builder: (context, _) {
+                return SegmentedButton<String>(
+                  segments: [
+                    ButtonSegment(value: 'ar', label: Text(S.t('arabic'))),
+                    ButtonSegment(value: 'en', label: Text(S.t('english'))),
+                  ],
+                  selected: {LocaleController.instance.language},
+                  onSelectionChanged: (selection) => _changeLanguage(selection.first),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 16),
+            Text(S.t('choose_section')),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              value: _selected,
+              value: _selectedSection,
               decoration: const InputDecoration(border: OutlineInputBorder()),
-              items: _sections.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-              onChanged: (value) => setState(() => _selected = value ?? _selected),
+              items: _sectionKeys
+                  .map((key) => DropdownMenuItem(value: key, child: Text(_sectionLabel(key))))
+                  .toList(),
+              onChanged: (value) => setState(() => _selectedSection = value ?? _selectedSection),
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
@@ -63,7 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               onPressed: _handleReset,
               icon: const Icon(Icons.cleaning_services),
-              label: const Text('🧹 ريست'),
+              label: Text(S.t('reset')),
             ),
             if (_status != null) ...[
               const SizedBox(height: 16),

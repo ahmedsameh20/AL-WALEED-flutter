@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../utils/app_session.dart';
 import '../widgets/dashboard_button.dart';
 import 'blends_screen.dart';
@@ -16,7 +17,7 @@ class SellerDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('لوحة العامل'),
+        title: Text(S.t('dashboard_title_seller')),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -35,14 +36,14 @@ class SellerDashboard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'أهلاً ${AppSession.instance.currentEmployeeName} (عامل)',
+              '${S.t('welcome')} ${AppSession.instance.currentEmployeeName} (${S.t('role_seller')})',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 24),
             DashboardButton(
               icon: Icons.receipt_long,
-              label: '🧾 تسجيل الطلب',
+              label: S.t('nav_orders'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const OrdersScreen()),
@@ -51,7 +52,7 @@ class SellerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.description,
-              label: '📄 الفواتير',
+              label: S.t('nav_invoices'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const InvoicesScreen()),
@@ -60,7 +61,7 @@ class SellerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.coffee,
-              label: '🫘 توليفات البن',
+              label: S.t('nav_blends'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const BlendsScreen()),
@@ -69,7 +70,7 @@ class SellerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.money_off,
-              label: '💸 المصروفات',
+              label: S.t('nav_expenses'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ExpensesScreen()),
@@ -78,7 +79,7 @@ class SellerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.chat_bubble_outline,
-              label: '📌 المحادثة',
+              label: S.t('nav_notes'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const NotesScreen()),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/log_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/log_entry.dart';
 
 class LogsScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _LogsScreenState extends State<LogsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('📜 سجل العمليات')),
+      appBar: AppBar(title: Text(S.t('logs_title'))),
       body: FutureBuilder<List<LogEntry>>(
         future: _logsFuture,
         builder: (context, snapshot) {
@@ -31,7 +32,7 @@ class _LogsScreenState extends State<LogsScreen> {
           }
           final logs = snapshot.data ?? [];
           if (logs.isEmpty) {
-            return const Center(child: Text('لا يوجد سجل عمليات بعد'));
+            return Center(child: Text(S.t('no_logs_yet')));
           }
           return ListView.builder(
             padding: const EdgeInsets.all(12),

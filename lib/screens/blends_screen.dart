@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/blend_service.dart';
+import '../l10n/app_strings.dart';
 import '../models/blend_component.dart';
 import '../utils/app_session.dart';
 
@@ -58,18 +59,19 @@ class _BlendsScreenState extends State<BlendsScreen> {
     final multiplier = double.tryParse(_quantityController.text.trim());
 
     if (multiplier == null || multiplier <= 0) {
-      setState(() => _status = '⚠️ أدخل كمية صحيحة (مثلاً 1 أو 2)');
+      setState(() => _status = S.t('err_enter_valid_quantity_blend'));
       return;
     }
     if (name.isEmpty) {
-      setState(() => _status = '⚠️ أدخل اسم التوليفة');
+      setState(() => _status = S.t('err_enter_blend_name'));
       return;
     }
 
     final totalUsed = _components.fold<double>(0, (sum, c) => sum + _usedQty(c.id));
     final expected = multiplier;
     if ((totalUsed - expected).abs() > 0.001) {
-      setState(() => _status = '⚠️ مجموع الكميات يجب أن يكون $expected كجم (الآن: $totalUsed)');
+      setState(() => _status =
+          '${S.t('err_quantity_sum_mismatch_prefix')} $expected ${S.t('err_quantity_sum_mismatch_kg_now')} $totalUsed)');
       return;
     }
 
@@ -78,7 +80,7 @@ class _BlendsScreenState extends State<BlendsScreen> {
     if (sellText.isNotEmpty) {
       manualSellPrice = double.tryParse(sellText);
       if (manualSellPrice == null) {
-        setState(() => _status = '⚠️ سعر البيع غير صالح');
+        setState(() => _status = S.t('err_invalid_sell_price'));
         return;
       }
     }
@@ -105,7 +107,7 @@ class _BlendsScreenState extends State<BlendsScreen> {
     setState(() => _submitting = false);
 
     if (orderId > 0) {
-      setState(() => _status = '✅ تم تسجيل التوليفة كفاتورة داخلية برقم: $orderId');
+      setState(() => _status = '${S.t('blend_created_prefix')} $orderId');
       _nameController.clear();
       _quantityController.text = '1';
       _sellPriceController.clear();
@@ -114,19 +116,19 @@ class _BlendsScreenState extends State<BlendsScreen> {
       }
       await _load();
     } else {
-      setState(() => _status = '❌ حدث خطأ أثناء إنشاء التوليفة (تأكد من توفر الكميات)');
+      setState(() => _status = S.t('blend_failed'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('🫘 إنشاء توليفة بن')),
+      appBar: AppBar(title: Text(S.t('blends_title'))),
       body: Column(
         children: [
           Expanded(
             child: _components.isEmpty
-                ? const Center(child: Text('لا يوجد بن متاح حاليًا'))
+                ? Center(child: Text(S.t('no_beans_available')))
                 : ListView.builder(
                     padding: const EdgeInsets.all(12),
                     itemCount: _components.length,
@@ -143,14 +145,14 @@ class _BlendsScreenState extends State<BlendsScreen> {
                                 child: Text(c.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                               ),
                               Expanded(
-                                child: Text('متوفر: ${c.availableQty.toStringAsFixed(2)}'),
+                                child: Text('${S.t('available_label')}: ${c.availableQty.toStringAsFixed(2)}'),
                               ),
                               SizedBox(
                                 width: 90,
                                 child: TextField(
                                   controller: _usedControllers[c.id],
                                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                  decoration: const InputDecoration(labelText: 'مستخدم', isDense: true),
+                                  decoration: InputDecoration(labelText: S.t('used_label'), isDense: true),
                                 ),
                               ),
                             ],
@@ -167,7 +169,7 @@ class _BlendsScreenState extends State<BlendsScreen> {
               children: [
                 TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'اسم التوليفة', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: S.t('blend_name'), border: const OutlineInputBorder()),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -176,7 +178,7 @@ class _BlendsScreenState extends State<BlendsScreen> {
                       child: TextField(
                         controller: _quantityController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'الكمية (كجم)', border: OutlineInputBorder()),
+                        decoration: InputDecoration(labelText: S.t('blend_quantity_kg'), border: const OutlineInputBorder()),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -184,7 +186,7 @@ class _BlendsScreenState extends State<BlendsScreen> {
                       child: TextField(
                         controller: _sellPriceController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(labelText: 'سعر البيع (اختياري)', border: OutlineInputBorder()),
+                        decoration: InputDecoration(labelText: S.t('sell_price_optional'), border: const OutlineInputBorder()),
                       ),
                     ),
                   ],
@@ -200,7 +202,7 @@ class _BlendsScreenState extends State<BlendsScreen> {
                     ),
                     onPressed: _submitting ? null : _createBlend,
                     icon: const Icon(Icons.check_circle_outline),
-                    label: const Text('✅ إنشاء التوليفة'),
+                    label: Text(S.t('create_blend')),
                   ),
                 ),
                 if (_status != null) ...[

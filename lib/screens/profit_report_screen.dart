@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/report_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/report_rows.dart';
 
 class ProfitReportScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('💰 تقرير الأرباح حسب المنتج')),
+      appBar: AppBar(title: Text(S.t('profit_report_title'))),
       body: FutureBuilder<List<ProfitRow>>(
         future: _profitFuture,
         builder: (context, snapshot) {
@@ -43,7 +44,7 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
             children: [
               Expanded(
                 child: rows.isEmpty
-                    ? const Center(child: Text('لا توجد بيانات أرباح بعد'))
+                    ? Center(child: Text(S.t('no_profit_data_yet')))
                     : ListView.builder(
                         padding: const EdgeInsets.all(12),
                         itemCount: rows.length,
@@ -62,11 +63,11 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
                                     spacing: 16,
                                     runSpacing: 4,
                                     children: [
-                                      Text('الكمية: ${row.totalQty.toStringAsFixed(2)}'),
-                                      Text('البيع: ${row.totalSales.toStringAsFixed(2)}'),
-                                      Text('التكلفة: ${row.totalCost.toStringAsFixed(2)}'),
+                                      Text('${S.t('quantity_label')}: ${row.totalQty.toStringAsFixed(2)}'),
+                                      Text('${S.t('sell_total_label')}: ${row.totalSales.toStringAsFixed(2)}'),
+                                      Text('${S.t('cost_total_label')}: ${row.totalCost.toStringAsFixed(2)}'),
                                       Text(
-                                        'الربح: ${row.profit.toStringAsFixed(2)}',
+                                        '${S.t('profit_label')}: ${row.profit.toStringAsFixed(2)}',
                                         style: TextStyle(
                                           color: row.profit >= 0 ? Colors.green.shade700 : Colors.red,
                                           fontWeight: FontWeight.bold,
@@ -89,11 +90,11 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
                   alignment: WrapAlignment.center,
                   spacing: 16,
                   children: [
-                    const Text('📊 الإجمالي:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('الكمية: ${totalQty.toStringAsFixed(2)}'),
-                    Text('البيع: ${totalSales.toStringAsFixed(2)}'),
-                    Text('التكلفة: ${totalCost.toStringAsFixed(2)}'),
-                    Text('الربح: ${totalProfit.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(S.t('total_colon'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text('${S.t('quantity_label')}: ${totalQty.toStringAsFixed(2)}'),
+                    Text('${S.t('sell_total_label')}: ${totalSales.toStringAsFixed(2)}'),
+                    Text('${S.t('cost_total_label')}: ${totalCost.toStringAsFixed(2)}'),
+                    Text('${S.t('profit_label')}: ${totalProfit.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),

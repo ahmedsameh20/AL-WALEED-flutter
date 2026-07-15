@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/notes_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/chat_message.dart';
 import '../utils/app_session.dart';
 import 'chat_screen.dart';
@@ -24,7 +25,7 @@ class _NotesScreenState extends State<NotesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('📌 المحادثة')),
+      appBar: AppBar(title: Text(S.t('chat_title'))),
       body: FutureBuilder<List<ChatContact>>(
         future: _contactsFuture,
         builder: (context, snapshot) {
@@ -33,7 +34,7 @@ class _NotesScreenState extends State<NotesScreen> {
           }
           final contacts = snapshot.data ?? [];
           if (contacts.isEmpty) {
-            return const Center(child: Text('لا يوجد موظفون آخرون'));
+            return Center(child: Text(S.t('no_other_employees')));
           }
           return ListView.builder(
             itemCount: contacts.length,

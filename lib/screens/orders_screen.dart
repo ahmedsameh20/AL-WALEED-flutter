@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../db/order_service.dart';
 import '../db/product_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/order_item.dart';
 import '../models/product.dart';
 import '../utils/app_session.dart';
@@ -46,7 +47,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   void _addToCart() {
     final product = _selectedProduct;
     if (product == null) {
-      _showMessage('⚠️ اختر منتجًا');
+      _showMessage(S.t('err_select_product'));
       return;
     }
 
@@ -56,7 +57,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     double? qty;
     if (isCups) {
       if (!RegExp(r'^\d+$').hasMatch(qtyText)) {
-        _showMessage('⚠️ لا يمكن إدخال كميات عشرية للأكواب');
+        _showMessage(S.t('err_no_decimal_cups'));
         return;
       }
       qty = double.tryParse(qtyText);
@@ -65,7 +66,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     }
 
     if (qty == null || qty <= 0) {
-      _showMessage('❌ تأكد من إدخال الكمية بشكل صحيح');
+      _showMessage(S.t('err_enter_valid_quantity'));
       return;
     }
 
@@ -91,14 +92,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Future<void> _submitOrder() async {
     if (_cart.isEmpty) {
-      _showMessage('⚠️ لم تقم بإضافة أي منتجات!');
+      _showMessage(S.t('err_no_products_added'));
       return;
     }
 
     setState(() => _submitting = true);
 
     final employeeName = AppSession.instance.isOwner
-        ? 'المالك'
+        ? S.t('business_owner_label')
         : (AppSession.instance.currentEmployeeName ?? '');
 
     final orderId = await OrderService.createOrder(
@@ -113,7 +114,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     setState(() => _submitting = false);
 
     if (orderId > 0) {
-      _showMessage('✔ تم حفظ الفاتورة بنجاح (رقم $orderId)');
+      _showMessage('${S.t('order_saved_prefix')} $orderId)');
       setState(() {
         _cart.clear();
         _customerNameController.clear();
@@ -121,14 +122,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
         _productsFuture = ProductDAO.getAll();
       });
     } else {
-      _showMessage('❌ فشل في حفظ الطلب (تأكد من توفر الكمية)');
+      _showMessage(S.t('order_failed'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('🧾 تسجيل الطلب')),
+      appBar: AppBar(title: Text(S.t('orders_title'))),
       body: FutureBuilder<List<Product>>(
         future: _productsFuture,
         builder: (context, snapshot) {
@@ -145,7 +146,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   children: [
                     DropdownButtonFormField<Product>(
                       value: _selectedProduct,
-                      decoration: const InputDecoration(labelText: 'المنتج', border: OutlineInputBorder()),
+                      decoration: InputDecoration(labelText: S.t('product'), border: const OutlineInputBorder()),
                       items: products
                           .map((p) => DropdownMenuItem(value: p, child: Text('${p.name} (${p.sellPrice})')))
                           .toList(),
@@ -158,7 +159,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           child: TextField(
                             controller: _quantityController,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            decoration: const InputDecoration(labelText: 'الكمية', border: OutlineInputBorder()),
+                            decoration: InputDecoration(labelText: S.t('quantity'), border: const OutlineInputBorder()),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -170,7 +171,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ),
                           onPressed: _addToCart,
                           icon: const Icon(Icons.add),
-                          label: const Text('أضف'),
+                          label: Text(S.t('add_short')),
                         ),
                       ],
                     ),
@@ -180,7 +181,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               const Divider(height: 1),
               Expanded(
                 child: _cart.isEmpty
-                    ? const Center(child: Text('لم تتم إضافة منتجات بعد'))
+                    ? Center(child: Text(S.t('no_products_added_yet')))
                     : ListView.builder(
                         padding: const EdgeInsets.all(12),
                         itemCount: _cart.length,
@@ -191,7 +192,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             child: ListTile(
                               title: Text(item.productName),
                               subtitle: Text(
-                                'سعر: ${item.unitPrice.toStringAsFixed(2)}  ×  كمية: ${item.quantity}  =  ${item.totalPrice.toStringAsFixed(2)}',
+                                '${S.t('price_label')}: ${item.unitPrice.toStringAsFixed(2)}  ×  ${S.t('quantity')}: ${item.quantity}  =  ${item.totalPrice.toStringAsFixed(2)}',
                               ),
                               trailing: IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
@@ -212,7 +213,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         Expanded(
                           child: TextField(
                             controller: _customerNameController,
-                            decoration: const InputDecoration(labelText: 'اسم العميل', border: OutlineInputBorder()),
+                            decoration: InputDecoration(labelText: S.t('customer_name'), border: const OutlineInputBorder()),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -220,7 +221,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           child: TextField(
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(labelText: 'رقم الهاتف', border: OutlineInputBorder()),
+                            decoration: InputDecoration(labelText: S.t('phone'), border: const OutlineInputBorder()),
                           ),
                         ),
                       ],
@@ -230,7 +231,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            'الإجمالي: ${_total.toStringAsFixed(2)} جنيه',
+                            '${S.t('total')}: ${_total.toStringAsFixed(2)} ${S.t('currency')}',
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -242,7 +243,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ),
                           onPressed: _submitting ? null : _submitOrder,
                           icon: const Icon(Icons.save),
-                          label: const Text('تأكيد الطلب'),
+                          label: Text(S.t('confirm_order')),
                         ),
                       ],
                     ),

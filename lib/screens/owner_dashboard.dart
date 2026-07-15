@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_strings.dart';
 import '../utils/app_session.dart';
 import '../widgets/dashboard_button.dart';
 import 'blends_screen.dart';
@@ -22,7 +23,7 @@ class OwnerDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('لوحة المدير'),
+        title: Text(S.t('dashboard_title_owner')),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -41,14 +42,14 @@ class OwnerDashboard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'أهلاً ${AppSession.instance.currentEmployeeName} (مدير)',
+              '${S.t('welcome')} ${AppSession.instance.currentEmployeeName} (${S.t('role_owner')})',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 24),
             DashboardButton(
               icon: Icons.receipt_long,
-              label: '🧾 تسجيل الطلب',
+              label: S.t('nav_orders'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const OrdersScreen()),
@@ -57,7 +58,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.inventory_2,
-              label: '📦 المنتجات',
+              label: S.t('nav_products'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ProductsScreen()),
@@ -66,7 +67,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.groups,
-              label: '👷‍♂️ الموظفين',
+              label: S.t('nav_employees'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const EmployeesScreen()),
@@ -75,7 +76,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.description,
-              label: '📄 الفواتير',
+              label: S.t('nav_invoices'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const InvoicesScreen()),
@@ -84,7 +85,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.coffee,
-              label: '🫘 توليفات البن',
+              label: S.t('nav_blends'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const BlendsScreen()),
@@ -93,7 +94,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.money_off,
-              label: '💸 المصروفات',
+              label: S.t('nav_expenses'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ExpensesScreen()),
@@ -102,7 +103,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.trending_up,
-              label: '📈 المبيعات',
+              label: S.t('nav_sales'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SalesReportScreen()),
@@ -111,7 +112,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.attach_money,
-              label: '💰 الأرباح',
+              label: S.t('nav_profits'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ProfitReportScreen()),
@@ -120,7 +121,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.history,
-              label: '📜 السجل',
+              label: S.t('nav_logs'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const LogsScreen()),
@@ -129,7 +130,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.chat_bubble_outline,
-              label: '📌 المحادثة',
+              label: S.t('nav_notes'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const NotesScreen()),
@@ -138,7 +139,7 @@ class OwnerDashboard extends StatelessWidget {
             ),
             DashboardButton(
               icon: Icons.settings,
-              label: '⚙️ الإعدادات',
+              label: S.t('nav_settings'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SettingsScreen()),

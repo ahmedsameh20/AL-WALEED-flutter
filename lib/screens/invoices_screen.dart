@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../db/invoice_dao.dart';
+import '../l10n/app_strings.dart';
 import '../models/invoice_summary.dart';
 import '../utils/app_session.dart';
 
@@ -46,17 +47,17 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
     final result = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('تعديل الملاحظة'),
+        title: Text(S.t('edit_note')),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(hintText: 'اكتب الملاحظة'),
+          decoration: InputDecoration(hintText: S.t('write_note_hint')),
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('إلغاء')),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: Text(S.t('cancel'))),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(controller.text),
-            child: const Text('حفظ'),
+            child: Text(S.t('save')),
           ),
         ],
       ),
@@ -72,13 +73,13 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('تأكيد الحذف'),
-        content: Text('تأكيد حذف الفاتورة #${invoice.id}؟'),
+        title: Text(S.t('confirm_delete')),
+        content: Text('${S.t('confirm_delete_invoice_prefix')}${invoice.id}?'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('لا')),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: Text(S.t('no'))),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('نعم', style: TextStyle(color: Colors.red)),
+            child: Text(S.t('yes'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -108,15 +109,18 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('مطحن الوليد للبن', style: TextStyle(fontFamily: 'monospace', fontSize: 15)),
+                  Text(S.t('print_preview_shop'), style: const TextStyle(fontFamily: 'monospace', fontSize: 15)),
                   const Text('-------------------------------', style: TextStyle(fontFamily: 'monospace')),
-                  Text('رقم الفاتورة: ${invoice.id}', style: const TextStyle(fontFamily: 'monospace')),
-                  Text('التاريخ: ${invoice.date}   الساعة: ${invoice.time}', style: const TextStyle(fontFamily: 'monospace')),
-                  Text('اسم العميل: ${invoice.customerName}', style: const TextStyle(fontFamily: 'monospace')),
-                  Text('الهاتف: ${invoice.phone}', style: const TextStyle(fontFamily: 'monospace')),
-                  Text('الموظف: ${invoice.employeeName}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('invoice_number_label')}: ${invoice.id}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text(
+                    '${S.t('date_label')}: ${invoice.date}   ${S.t('time_label')}: ${invoice.time}',
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
+                  Text('${S.t('customer_name')}: ${invoice.customerName}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('phone_label')}: ${invoice.phone}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('employee_label')}: ${invoice.employeeName}', style: const TextStyle(fontFamily: 'monospace')),
                   const SizedBox(height: 8),
-                  const Text('المنتجات:', style: TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('products_label')}:', style: const TextStyle(fontFamily: 'monospace')),
                   for (final item in items)
                     Text(
                       '- ${item['name']} × ${item['quantity']} × ${item['unit_price']} = ${(item['quantity'] as num) * (item['unit_price'] as num)}',
@@ -124,12 +128,12 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                     ),
                   const SizedBox(height: 8),
                   const Text('-------------------------------', style: TextStyle(fontFamily: 'monospace')),
-                  Text('الإجمالي: ${invoice.total} جنيه', style: const TextStyle(fontFamily: 'monospace')),
-                  Text('ملاحظات: ${invoice.note}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('total')}: ${invoice.total} ${S.t('currency')}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('notes_label')}: ${invoice.note}', style: const TextStyle(fontFamily: 'monospace')),
                   const SizedBox(height: 20),
-                  const Text(
-                    'لا تتوفر طباعة مباشرة على الجوال — استخدم لقطة شاشة أو المشاركة.',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  Text(
+                    S.t('no_mobile_print'),
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),
@@ -143,16 +147,16 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('📄 فواتير الطلبات')),
+      appBar: AppBar(title: Text(S.t('invoices_title'))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: '🔍 بحث برقم الفاتورة أو اسم العميل أو الهاتف',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: S.t('search_invoices_hint'),
+                border: const OutlineInputBorder(),
               ),
               onChanged: (value) => setState(() => _query = value),
             ),
@@ -169,7 +173,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                     .toList();
 
                 if (invoices.isEmpty) {
-                  return const Center(child: Text('لا توجد فواتير'));
+                  return Center(child: Text(S.t('no_invoices')));
                 }
 
                 return ListView.builder(
@@ -188,11 +192,11 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    'فاتورة #${invoice.id}',
+                                    '${S.t('invoice_hash')}${invoice.id}',
                                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                                Text('${invoice.total.toStringAsFixed(2)} جنيه'),
+                                Text('${invoice.total.toStringAsFixed(2)} ${S.t('currency')}'),
                               ],
                             ),
                             const SizedBox(height: 4),
@@ -200,21 +204,21 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                             const SizedBox(height: 6),
                             Text(invoice.itemsSummary),
                             const SizedBox(height: 6),
-                            Text('العميل: ${invoice.customerName}  الهاتف: ${invoice.phone}'),
-                            Text('الموظف: ${invoice.employeeName}'),
-                            if (invoice.note.isNotEmpty) Text('ملاحظة: ${invoice.note}'),
+                            Text('${S.t('customer_label')}: ${invoice.customerName}  ${S.t('phone_label')}: ${invoice.phone}'),
+                            Text('${S.t('employee_label')}: ${invoice.employeeName}'),
+                            if (invoice.note.isNotEmpty) Text('${S.t('note_label')}: ${invoice.note}'),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 TextButton.icon(
                                   onPressed: () => _editNote(invoice),
                                   icon: const Icon(Icons.edit_note, size: 18),
-                                  label: const Text('ملاحظة'),
+                                  label: Text(S.t('note_button')),
                                 ),
                                 TextButton.icon(
                                   onPressed: () => _showPrintPreview(invoice),
                                   icon: const Icon(Icons.print, size: 18),
-                                  label: const Text('طباعة'),
+                                  label: Text(S.t('print_button')),
                                 ),
                                 if (_isOwner)
                                   IconButton(

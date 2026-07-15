@@ -4,17 +4,17 @@ class SettingsDAO {
   static Future<void> resetSection(String section) async {
     final db = await DBHelper.instance.database;
     switch (section) {
-      case 'الفواتير':
+      case 'invoices':
         await db.delete('orders');
         await db.delete('order_items');
         break;
-      case 'الطلبات':
+      case 'orders':
         await db.delete('order_items');
         break;
-      case 'المنتجات':
+      case 'products':
         await db.delete('products');
         break;
-      case 'المصروفات':
+      case 'expenses':
         await db.delete('expenses');
         break;
     }
