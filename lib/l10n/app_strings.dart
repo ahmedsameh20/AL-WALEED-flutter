@@ -100,6 +100,11 @@ class S {
     'nav_logs': {'ar': 'السجل', 'en': 'Logs'},
     'nav_notes': {'ar': 'المحادثة', 'en': 'Chat'},
     'nav_settings': {'ar': 'الإعدادات', 'en': 'Settings'},
+    'section_operations': {'ar': 'العمليات اليومية', 'en': 'Daily Operations'},
+    'section_management': {'ar': 'الإدارة', 'en': 'Management'},
+    'section_finance': {'ar': 'المالية والتقارير', 'en': 'Finance & Reports'},
+    'section_more': {'ar': 'المزيد', 'en': 'More'},
+    'log_out': {'ar': 'تسجيل الخروج', 'en': 'Log Out'},
 
     // Products
     'products_title': {'ar': 'إدارة المنتجات', 'en': 'Manage Products'},
