@@ -13,6 +13,7 @@ import 'orders_screen.dart';
 import 'products_screen.dart';
 import 'profit_report_screen.dart';
 import 'sales_report_screen.dart';
+import 'settings_screen.dart';
 
 class OwnerDashboard extends StatelessWidget {
   const OwnerDashboard({super.key});
@@ -132,6 +133,15 @@ class OwnerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const NotesScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.settings,
+              label: '⚙️ الإعدادات',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
                 );
               },
             ),
