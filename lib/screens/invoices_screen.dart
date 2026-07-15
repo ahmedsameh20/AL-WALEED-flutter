@@ -129,6 +129,11 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                   const SizedBox(height: 8),
                   const Text('-------------------------------', style: TextStyle(fontFamily: 'monospace')),
                   Text('${S.t('subtotal')}: ${invoice.subtotal.toStringAsFixed(2)} ${S.t('currency')}', style: const TextStyle(fontFamily: 'monospace')),
+                  if (invoice.discountAmount > 0)
+                    Text(
+                      '${S.t('discount_label')} (${invoice.discountCode}): -${invoice.discountAmount.toStringAsFixed(2)} ${S.t('currency')}',
+                      style: const TextStyle(fontFamily: 'monospace'),
+                    ),
                   Text(
                     '${S.t('vat_label')} (${invoice.taxRate.toStringAsFixed(0)}%): ${invoice.taxAmount.toStringAsFixed(2)} ${S.t('currency')}',
                     style: const TextStyle(fontFamily: 'monospace'),
@@ -208,10 +213,11 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                             Text('${invoice.date} ${invoice.time}', style: const TextStyle(color: Colors.grey)),
                             const SizedBox(height: 6),
                             Text(invoice.itemsSummary),
-                            if (invoice.taxAmount > 0) ...[
+                            if (invoice.taxAmount > 0 || invoice.discountAmount > 0) ...[
                               const SizedBox(height: 4),
                               Text(
                                 '${S.t('subtotal')}: ${invoice.subtotal.toStringAsFixed(2)}   '
+                                '${invoice.discountAmount > 0 ? '${S.t('discount_label')} (${invoice.discountCode}): -${invoice.discountAmount.toStringAsFixed(2)}   ' : ''}'
                                 '${S.t('vat_label')} (${invoice.taxRate.toStringAsFixed(0)}%): ${invoice.taxAmount.toStringAsFixed(2)}',
                                 style: const TextStyle(color: Colors.grey, fontSize: 12),
                               ),

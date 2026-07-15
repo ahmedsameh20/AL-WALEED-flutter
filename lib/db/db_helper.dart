@@ -20,7 +20,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE employees (
@@ -58,6 +58,8 @@ class DBHelper {
             customer_name TEXT,
             customer_phone TEXT,
             subtotal REAL DEFAULT 0,
+            discount_code TEXT,
+            discount_amount REAL DEFAULT 0,
             tax_rate REAL DEFAULT 0,
             tax_amount REAL DEFAULT 0,
             total_price REAL,
@@ -113,6 +115,17 @@ class DBHelper {
           );
         ''');
 
+        await db.execute('''
+          CREATE TABLE promo_codes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            code TEXT UNIQUE NOT NULL,
+            type TEXT NOT NULL,
+            value REAL NOT NULL,
+            active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT (datetime('now'))
+          );
+        ''');
+
         await db.execute(
           'CREATE INDEX idx_orders_created_at ON orders(created_at);',
         );
@@ -136,6 +149,20 @@ class DBHelper {
         }
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 4) {
+          await db.execute('ALTER TABLE orders ADD COLUMN discount_code TEXT');
+          await db.execute('ALTER TABLE orders ADD COLUMN discount_amount REAL DEFAULT 0');
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS promo_codes (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              code TEXT UNIQUE NOT NULL,
+              type TEXT NOT NULL,
+              value REAL NOT NULL,
+              active INTEGER DEFAULT 1,
+              created_at TEXT DEFAULT (datetime('now'))
+            );
+          ''');
+        }
         if (oldVersion < 3) {
           await db.execute('ALTER TABLE orders ADD COLUMN subtotal REAL DEFAULT 0');
           await db.execute('ALTER TABLE orders ADD COLUMN tax_rate REAL DEFAULT 0');

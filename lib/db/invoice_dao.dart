@@ -13,6 +13,8 @@ class InvoiceDAO {
         o.id AS id,
         GROUP_CONCAT(p.name || ' × ' || oi.quantity || ' × ' || oi.unit_price || ' = ' || (oi.quantity * oi.unit_price), ' - ') AS items_summary,
         o.subtotal AS subtotal,
+        o.discount_code AS discount_code,
+        o.discount_amount AS discount_amount,
         o.tax_rate AS tax_rate,
         o.tax_amount AS tax_amount,
         o.total_price AS total_price,

@@ -11,12 +11,15 @@ class OrderService {
     required String employeeName,
     required List<OrderItem> items,
     String note = '',
+    String? discountCode,
+    double discountAmount = 0,
   }) async {
     final db = await DBHelper.instance.database;
     final subtotal = items.fold<double>(0, (sum, item) => sum + item.totalPrice);
+    final taxableAmount = subtotal - discountAmount;
     final taxRate = AppSettings.instance.vatRate;
-    final taxAmount = subtotal * taxRate / 100;
-    final total = subtotal + taxAmount;
+    final taxAmount = taxableAmount * taxRate / 100;
+    final total = taxableAmount + taxAmount;
 
     try {
       return await db.transaction<int>((txn) async {
@@ -41,6 +44,8 @@ class OrderService {
           'customer_name': customerName,
           'customer_phone': phone,
           'subtotal': subtotal,
+          'discount_code': discountCode,
+          'discount_amount': discountAmount,
           'tax_rate': taxRate,
           'tax_amount': taxAmount,
           'total_price': total,

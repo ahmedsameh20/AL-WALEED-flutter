@@ -2,6 +2,8 @@ class InvoiceSummary {
   final int id;
   final String itemsSummary;
   final double subtotal;
+  final String discountCode;
+  final double discountAmount;
   final double taxRate;
   final double taxAmount;
   final double total;
@@ -16,6 +18,8 @@ class InvoiceSummary {
     required this.id,
     required this.itemsSummary,
     required this.subtotal,
+    required this.discountCode,
+    required this.discountAmount,
     required this.taxRate,
     required this.taxAmount,
     required this.total,
@@ -32,6 +36,8 @@ class InvoiceSummary {
       id: map['id'] as int,
       itemsSummary: map['items_summary'] as String? ?? '',
       subtotal: (map['subtotal'] as num?)?.toDouble() ?? 0,
+      discountCode: map['discount_code'] as String? ?? '',
+      discountAmount: (map['discount_amount'] as num?)?.toDouble() ?? 0,
       taxRate: (map['tax_rate'] as num?)?.toDouble() ?? 0,
       taxAmount: (map['tax_amount'] as num?)?.toDouble() ?? 0,
       total: (map['total_price'] as num?)?.toDouble() ?? 0,

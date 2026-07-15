@@ -13,6 +13,7 @@ import 'notes_screen.dart';
 import 'orders_screen.dart';
 import 'products_screen.dart';
 import 'profit_report_screen.dart';
+import 'promo_codes_screen.dart';
 import 'sales_report_screen.dart';
 import 'settings_screen.dart';
 
@@ -99,6 +100,11 @@ class OwnerDashboard extends StatelessWidget {
                     icon: Icons.groups,
                     label: S.t('nav_employees'),
                     onPressed: () => _open(context, const EmployeesScreen()),
+                  ),
+                  DashboardTile(
+                    icon: Icons.local_offer,
+                    label: S.t('nav_promo_codes'),
+                    onPressed: () => _open(context, const PromoCodesScreen()),
                   ),
                 ],
               ),

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../db/order_service.dart';
 import '../db/product_dao.dart';
+import '../db/promo_code_dao.dart';
 import '../l10n/app_strings.dart';
 import '../models/order_item.dart';
 import '../models/product.dart';
+import '../models/promo_code.dart';
 import '../utils/app_session.dart';
 import '../utils/app_settings.dart';
 
@@ -19,11 +21,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
   final _quantityController = TextEditingController();
   final _customerNameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _promoCodeController = TextEditingController();
 
   late Future<List<Product>> _productsFuture;
   Product? _selectedProduct;
   final List<OrderItem> _cart = [];
   bool _submitting = false;
+  PromoCode? _appliedCode;
 
   @override
   void initState() {
@@ -36,6 +40,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     _quantityController.dispose();
     _customerNameController.dispose();
     _phoneController.dispose();
+    _promoCodeController.dispose();
     super.dispose();
   }
 
@@ -44,9 +49,32 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   double get _subtotal => _cart.fold(0, (sum, item) => sum + item.totalPrice);
+  double get _discountAmount => _appliedCode?.discountFor(_subtotal) ?? 0;
+  double get _taxableAmount => _subtotal - _discountAmount;
   double get _vatRate => AppSettings.instance.vatRate;
-  double get _taxAmount => _subtotal * _vatRate / 100;
-  double get _total => _subtotal + _taxAmount;
+  double get _taxAmount => _taxableAmount * _vatRate / 100;
+  double get _total => _taxableAmount + _taxAmount;
+
+  Future<void> _applyPromoCode() async {
+    final code = _promoCodeController.text.trim();
+    if (code.isEmpty) return;
+    final match = await PromoCodeDAO.findActive(code);
+    if (!mounted) return;
+    if (match == null) {
+      setState(() => _appliedCode = null);
+      _showMessage(S.t('invalid_promo_code'));
+      return;
+    }
+    setState(() => _appliedCode = match);
+    _showMessage(S.t('promo_code_applied'));
+  }
+
+  void _removePromoCode() {
+    setState(() {
+      _appliedCode = null;
+      _promoCodeController.clear();
+    });
+  }
 
   void _addToCart() {
     final product = _selectedProduct;
@@ -118,6 +146,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
       employeeId: AppSession.instance.currentEmployeeId,
       employeeName: employeeName,
       items: _cart,
+      discountCode: _appliedCode?.code,
+      discountAmount: _discountAmount,
     );
 
     if (!mounted) return;
@@ -129,6 +159,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
         _cart.clear();
         _customerNameController.clear();
         _phoneController.clear();
+        _promoCodeController.clear();
+        _appliedCode = null;
         _productsFuture = ProductDAO.getAll();
       });
     } else {
@@ -238,12 +270,40 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                     const SizedBox(height: 12),
                     Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _promoCodeController,
+                            textCapitalization: TextCapitalization.characters,
+                            enabled: _appliedCode == null,
+                            decoration: InputDecoration(hintText: S.t('promo_code_hint'), border: const OutlineInputBorder()),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        OutlinedButton(
+                          onPressed: _appliedCode == null ? _applyPromoCode : _removePromoCode,
+                          child: Text(_appliedCode == null ? S.t('apply_code') : S.t('remove_code')),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('${S.t('subtotal')}: ${_subtotal.toStringAsFixed(2)} ${S.t('currency')}'),
                         Text('${S.t('vat_label')} (${_vatRate.toStringAsFixed(0)}%): ${_taxAmount.toStringAsFixed(2)} ${S.t('currency')}'),
                       ],
                     ),
+                    if (_appliedCode != null) ...[
+                      const SizedBox(height: 4),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '${S.t('discount_label')} (${_appliedCode!.code}): -${_discountAmount.toStringAsFixed(2)} ${S.t('currency')}',
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     Row(
                       children: [
