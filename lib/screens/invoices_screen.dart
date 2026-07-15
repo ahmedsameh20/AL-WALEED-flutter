@@ -128,7 +128,12 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                     ),
                   const SizedBox(height: 8),
                   const Text('-------------------------------', style: TextStyle(fontFamily: 'monospace')),
-                  Text('${S.t('total')}: ${invoice.total} ${S.t('currency')}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('subtotal')}: ${invoice.subtotal.toStringAsFixed(2)} ${S.t('currency')}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text(
+                    '${S.t('vat_label')} (${invoice.taxRate.toStringAsFixed(0)}%): ${invoice.taxAmount.toStringAsFixed(2)} ${S.t('currency')}',
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
+                  Text('${S.t('total')}: ${invoice.total.toStringAsFixed(2)} ${S.t('currency')}', style: const TextStyle(fontFamily: 'monospace')),
                   Text('${S.t('notes_label')}: ${invoice.note}', style: const TextStyle(fontFamily: 'monospace')),
                   const SizedBox(height: 20),
                   Text(
@@ -203,6 +208,14 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                             Text('${invoice.date} ${invoice.time}', style: const TextStyle(color: Colors.grey)),
                             const SizedBox(height: 6),
                             Text(invoice.itemsSummary),
+                            if (invoice.taxAmount > 0) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                '${S.t('subtotal')}: ${invoice.subtotal.toStringAsFixed(2)}   '
+                                '${S.t('vat_label')} (${invoice.taxRate.toStringAsFixed(0)}%): ${invoice.taxAmount.toStringAsFixed(2)}',
+                                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                              ),
+                            ],
                             const SizedBox(height: 6),
                             Text('${S.t('customer_label')}: ${invoice.customerName}  ${S.t('phone_label')}: ${invoice.phone}'),
                             Text('${S.t('employee_label')}: ${invoice.employeeName}'),

@@ -190,6 +190,8 @@ class S {
     },
     'customer_name': {'ar': 'اسم العميل', 'en': 'Customer Name'},
     'phone': {'ar': 'رقم الهاتف', 'en': 'Phone Number'},
+    'subtotal': {'ar': 'الإجمالي الفرعي', 'en': 'Subtotal'},
+    'vat_label': {'ar': 'ضريبة القيمة المضافة', 'en': 'VAT'},
     'total': {'ar': 'الإجمالي', 'en': 'Total'},
     'confirm_order': {'ar': 'تأكيد الطلب', 'en': 'Confirm Order'},
     'err_select_product': {'ar': 'اختر منتجًا', 'en': 'Select a product'},
@@ -361,5 +363,16 @@ class S {
     'language': {'ar': 'اللغة', 'en': 'Language'},
     'arabic': {'ar': 'العربية', 'en': 'Arabic'},
     'english': {'ar': 'الإنجليزية', 'en': 'English'},
+    'vat_rate_label': {'ar': 'نسبة ضريبة القيمة المضافة (%)', 'en': 'VAT Rate (%)'},
+    'vat_rate_hint': {
+      'ar': 'تُطبّق على كل الطلبات الجديدة',
+      'en': 'Applied to all new orders',
+    },
+    'save_vat_rate': {'ar': 'حفظ النسبة', 'en': 'Save Rate'},
+    'err_invalid_vat_rate': {
+      'ar': 'أدخل نسبة ضريبة صحيحة (0-100)',
+      'en': 'Enter a valid VAT rate (0-100)',
+    },
+    'vat_rate_saved': {'ar': 'تم حفظ نسبة الضريبة.', 'en': 'VAT rate saved.'},
   };
 }

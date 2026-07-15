@@ -1,4 +1,5 @@
 import '../models/order_item.dart';
+import '../utils/app_settings.dart';
 import 'db_helper.dart';
 
 class OrderService {
@@ -12,7 +13,10 @@ class OrderService {
     String note = '',
   }) async {
     final db = await DBHelper.instance.database;
-    final total = items.fold<double>(0, (sum, item) => sum + item.totalPrice);
+    final subtotal = items.fold<double>(0, (sum, item) => sum + item.totalPrice);
+    final taxRate = AppSettings.instance.vatRate;
+    final taxAmount = subtotal * taxRate / 100;
+    final total = subtotal + taxAmount;
 
     try {
       return await db.transaction<int>((txn) async {
@@ -36,6 +40,9 @@ class OrderService {
           'employee_name': employeeName,
           'customer_name': customerName,
           'customer_phone': phone,
+          'subtotal': subtotal,
+          'tax_rate': taxRate,
+          'tax_amount': taxAmount,
           'total_price': total,
           'note': note,
         });

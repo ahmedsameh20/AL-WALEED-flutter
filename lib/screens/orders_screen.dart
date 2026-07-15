@@ -6,6 +6,7 @@ import '../l10n/app_strings.dart';
 import '../models/order_item.dart';
 import '../models/product.dart';
 import '../utils/app_session.dart';
+import '../utils/app_settings.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -42,7 +43,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  double get _total => _cart.fold(0, (sum, item) => sum + item.totalPrice);
+  double get _subtotal => _cart.fold(0, (sum, item) => sum + item.totalPrice);
+  double get _vatRate => AppSettings.instance.vatRate;
+  double get _taxAmount => _subtotal * _vatRate / 100;
+  double get _total => _subtotal + _taxAmount;
 
   void _addToCart() {
     final product = _selectedProduct;
@@ -233,6 +237,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('${S.t('subtotal')}: ${_subtotal.toStringAsFixed(2)} ${S.t('currency')}'),
+                        Text('${S.t('vat_label')} (${_vatRate.toStringAsFixed(0)}%): ${_taxAmount.toStringAsFixed(2)} ${S.t('currency')}'),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(

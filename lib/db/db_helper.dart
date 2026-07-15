@@ -20,7 +20,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE employees (
@@ -57,6 +57,9 @@ class DBHelper {
             employee_name TEXT NOT NULL,
             customer_name TEXT,
             customer_phone TEXT,
+            subtotal REAL DEFAULT 0,
+            tax_rate REAL DEFAULT 0,
+            tax_amount REAL DEFAULT 0,
             total_price REAL,
             note TEXT,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -133,6 +136,13 @@ class DBHelper {
         }
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 3) {
+          await db.execute('ALTER TABLE orders ADD COLUMN subtotal REAL DEFAULT 0');
+          await db.execute('ALTER TABLE orders ADD COLUMN tax_rate REAL DEFAULT 0');
+          await db.execute('ALTER TABLE orders ADD COLUMN tax_amount REAL DEFAULT 0');
+          // Pre-VAT orders had no tax: treat their existing total as the subtotal.
+          await db.execute('UPDATE orders SET subtotal = total_price WHERE subtotal = 0');
+        }
         if (oldVersion < 2) {
           await db.execute('ALTER TABLE employees ADD COLUMN salt TEXT NOT NULL DEFAULT \'\'');
           // Migrate any existing plain-text passwords to salted hashes.

@@ -12,6 +12,9 @@ class InvoiceDAO {
       SELECT
         o.id AS id,
         GROUP_CONCAT(p.name || ' × ' || oi.quantity || ' × ' || oi.unit_price || ' = ' || (oi.quantity * oi.unit_price), ' - ') AS items_summary,
+        o.subtotal AS subtotal,
+        o.tax_rate AS tax_rate,
+        o.tax_amount AS tax_amount,
         o.total_price AS total_price,
         o.customer_name AS customer_name,
         o.customer_phone AS customer_phone,

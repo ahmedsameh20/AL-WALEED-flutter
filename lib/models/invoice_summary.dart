@@ -1,6 +1,9 @@
 class InvoiceSummary {
   final int id;
   final String itemsSummary;
+  final double subtotal;
+  final double taxRate;
+  final double taxAmount;
   final double total;
   final String customerName;
   final String phone;
@@ -12,6 +15,9 @@ class InvoiceSummary {
   const InvoiceSummary({
     required this.id,
     required this.itemsSummary,
+    required this.subtotal,
+    required this.taxRate,
+    required this.taxAmount,
     required this.total,
     required this.customerName,
     required this.phone,
@@ -25,6 +31,9 @@ class InvoiceSummary {
     return InvoiceSummary(
       id: map['id'] as int,
       itemsSummary: map['items_summary'] as String? ?? '',
+      subtotal: (map['subtotal'] as num?)?.toDouble() ?? 0,
+      taxRate: (map['tax_rate'] as num?)?.toDouble() ?? 0,
+      taxAmount: (map['tax_amount'] as num?)?.toDouble() ?? 0,
       total: (map['total_price'] as num?)?.toDouble() ?? 0,
       customerName: map['customer_name'] as String? ?? '',
       phone: map['customer_phone'] as String? ?? '',

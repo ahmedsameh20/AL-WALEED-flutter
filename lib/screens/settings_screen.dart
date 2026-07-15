@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../db/settings_dao.dart';
 import '../l10n/app_strings.dart';
 import '../utils/app_session.dart';
+import '../utils/app_settings.dart';
 import 'owner_dashboard.dart';
 import 'seller_dashboard.dart';
 
@@ -18,6 +19,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   String _selectedSection = 'invoices';
   String? _status;
+  late final _vatRateController = TextEditingController(
+    text: AppSettings.instance.vatRate.toStringAsFixed(0),
+  );
+  String? _vatStatus;
+
+  @override
+  void dispose() {
+    _vatRateController.dispose();
+    super.dispose();
+  }
 
   String _sectionLabel(String key) => S.t('section_$key');
 
@@ -63,6 +74,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _status = '${S.t('section_deleted_prefix')} $sectionLabel ${S.t('section_deleted_suffix')}');
   }
 
+  Future<void> _saveVatRate() async {
+    final rate = double.tryParse(_vatRateController.text.trim());
+    if (rate == null || rate < 0 || rate > 100) {
+      setState(() => _vatStatus = S.t('err_invalid_vat_rate'));
+      return;
+    }
+    await AppSettings.instance.setVatRate(rate);
+    if (!mounted) return;
+    setState(() => _vatStatus = S.t('vat_rate_saved'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,6 +109,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
             ),
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 16),
+            Text(S.t('vat_rate_label'), style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(S.t('vat_rate_hint'), style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _vatRateController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(border: OutlineInputBorder(), suffixText: '%'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D4C41),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  ),
+                  onPressed: _saveVatRate,
+                  child: Text(S.t('save_vat_rate')),
+                ),
+              ],
+            ),
+            if (_vatStatus != null) ...[
+              const SizedBox(height: 8),
+              Text(_vatStatus!, textAlign: TextAlign.center),
+            ],
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 16),
