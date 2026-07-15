@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../db/report_dao.dart';
@@ -18,6 +19,75 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
   void initState() {
     super.initState();
     _profitFuture = ReportDAO.getProfitByProduct();
+  }
+
+  Widget _buildProfitChart(List<ProfitRow> rows) {
+    final topRows = rows.take(6).toList();
+    final maxAbs = topRows.fold<double>(1, (m, r) => r.profit.abs() > m ? r.profit.abs() : m);
+    final chartMax = maxAbs * 1.2;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(S.t('profit_by_product_chart_title'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 200,
+            child: BarChart(
+              BarChartData(
+                minY: -chartMax,
+                maxY: chartMax,
+                gridData: const FlGridData(show: true, drawVerticalLine: false),
+                borderData: FlBorderData(show: false),
+                titlesData: FlTitlesData(
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 44, getTitlesWidget: (value, meta) {
+                      return Text(value.toStringAsFixed(0), style: const TextStyle(fontSize: 10));
+                    }),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 36,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index < 0 || index >= topRows.length) return const SizedBox.shrink();
+                        final name = topRows[index].productName;
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(
+                            name.length > 8 ? '${name.substring(0, 8)}…' : name,
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                barGroups: [
+                  for (var i = 0; i < topRows.length; i++)
+                    BarChartGroupData(
+                      x: i,
+                      barRods: [
+                        BarChartRodData(
+                          toY: topRows[i].profit,
+                          color: topRows[i].profit >= 0 ? Colors.green.shade600 : Colors.red.shade400,
+                          width: 22,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -42,6 +112,7 @@ class _ProfitReportScreenState extends State<ProfitReportScreen> {
 
           return Column(
             children: [
+              if (rows.isNotEmpty) _buildProfitChart(rows),
               Expanded(
                 child: rows.isEmpty
                     ? Center(child: Text(S.t('no_profit_data_yet')))

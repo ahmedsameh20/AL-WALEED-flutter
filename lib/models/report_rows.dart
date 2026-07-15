@@ -32,6 +32,20 @@ class ProductQuantity {
   }
 }
 
+class DailySales {
+  final String date;
+  final double totalSales;
+
+  const DailySales({required this.date, required this.totalSales});
+
+  factory DailySales.fromMap(Map<String, Object?> map) {
+    return DailySales(
+      date: map['day'] as String? ?? '',
+      totalSales: (map['total_sales'] as num?)?.toDouble() ?? 0,
+    );
+  }
+}
+
 class ProfitRow {
   final String productName;
   final double totalQty;

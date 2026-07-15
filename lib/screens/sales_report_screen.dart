@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../db/report_dao.dart';
@@ -14,8 +15,11 @@ class SalesReportScreen extends StatefulWidget {
 class _SalesReportScreenState extends State<SalesReportScreen> {
   static const _periodKeys = ['hour', 'today', 'week', 'month', 'year'];
 
+  static const _trendDays = 7;
+
   String _period = 'today';
   late Future<List<EmployeeSales>> _salesFuture;
+  late final Future<List<DailySales>> _trendFuture = ReportDAO.getDailySalesTrend(_trendDays);
 
   @override
   void initState() {
@@ -90,12 +94,87 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
     );
   }
 
+  Widget _buildTrendChart(List<DailySales> data) {
+    final maxY = data.fold<double>(0, (m, d) => d.totalSales > m ? d.totalSales : m);
+    final safeMaxY = maxY <= 0 ? 1.0 : maxY * 1.2;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${S.t('sales_trend_title')} ($_trendDays ${S.t('days_label')})',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 180,
+            child: LineChart(
+              LineChartData(
+                minY: 0,
+                maxY: safeMaxY,
+                gridData: const FlGridData(show: true, drawVerticalLine: false),
+                titlesData: FlTitlesData(
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 40, getTitlesWidget: (value, meta) {
+                      return Text(value.toStringAsFixed(0), style: const TextStyle(fontSize: 10));
+                    }),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index < 0 || index >= data.length) return const SizedBox.shrink();
+                        final parts = data[index].date.split('-');
+                        final label = parts.length == 3 ? '${parts[1]}/${parts[2]}' : '';
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(label, style: const TextStyle(fontSize: 10)),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: [
+                      for (var i = 0; i < data.length; i++) FlSpot(i.toDouble(), data[i].totalSales),
+                    ],
+                    isCurved: true,
+                    color: const Color(0xFF6D4C41),
+                    barWidth: 3,
+                    dotData: const FlDotData(show: true),
+                    belowBarData: BarAreaData(show: true, color: const Color(0x336D4C41)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(S.t('sales_report_title'))),
       body: Column(
         children: [
+          FutureBuilder<List<DailySales>>(
+            future: _trendFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
+                return const SizedBox(height: 180);
+              }
+              return _buildTrendChart(snapshot.data!);
+            },
+          ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: DropdownButtonFormField<String>(

@@ -311,6 +311,8 @@ class S {
       'en': 'Quantities sold by product',
     },
     'no_data': {'ar': 'لا توجد بيانات', 'en': 'No data'},
+    'sales_trend_title': {'ar': 'اتجاه المبيعات آخر', 'en': 'Sales Trend — Last'},
+    'days_label': {'ar': 'أيام', 'en': 'days'},
 
     // Profit report
     'profit_report_title': {
@@ -318,6 +320,7 @@ class S {
       'en': 'Profit Report by Product',
     },
     'no_profit_data_yet': {'ar': 'لا توجد بيانات أرباح بعد', 'en': 'No profit data yet'},
+    'profit_by_product_chart_title': {'ar': 'الأرباح حسب المنتج', 'en': 'Profit by Product'},
     'quantity_label': {'ar': 'الكمية', 'en': 'Quantity'},
     'sell_total_label': {'ar': 'البيع', 'en': 'Sales'},
     'cost_total_label': {'ar': 'التكلفة', 'en': 'Cost'},
