@@ -24,4 +24,4 @@ flutter pub get
 flutter run
 ```
 
-Default seeded accounts (owner role): `khaled` / `1234`, `waleed` / `1234`.
+Default seeded accounts (owner role): `ahmed` / `1234`, `sameh` / `1234`.

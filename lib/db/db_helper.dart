@@ -113,17 +113,17 @@ class DBHelper {
 
         // Seed default owner accounts (matches setup.sql)
         await db.insert('employees', {
-          'name': 'Khaled',
+          'name': 'Ahmed',
           'salary': 10000,
-          'username': 'khaled',
+          'username': 'ahmed',
           'password': '1234',
           'active': 1,
           'role': 'owner',
         });
         await db.insert('employees', {
-          'name': 'Waleed',
+          'name': 'Sameh',
           'salary': 10000,
-          'username': 'waleed',
+          'username': 'sameh',
           'password': '1234',
           'active': 1,
           'role': 'owner',
