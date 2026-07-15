@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/app_session.dart';
 import '../widgets/dashboard_button.dart';
+import 'invoices_screen.dart';
 import 'login_screen.dart';
 import 'orders_screen.dart';
 
@@ -42,6 +43,15 @@ class SellerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.description,
+              label: '📄 الفواتير',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const InvoicesScreen()),
                 );
               },
             ),
