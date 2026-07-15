@@ -8,6 +8,8 @@ import 'invoices_screen.dart';
 import 'login_screen.dart';
 import 'orders_screen.dart';
 import 'products_screen.dart';
+import 'profit_report_screen.dart';
+import 'sales_report_screen.dart';
 
 class OwnerDashboard extends StatelessWidget {
   const OwnerDashboard({super.key});
@@ -82,6 +84,24 @@ class OwnerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.trending_up,
+              label: '📈 المبيعات',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SalesReportScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.attach_money,
+              label: '💰 الأرباح',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ProfitReportScreen()),
                 );
               },
             ),
