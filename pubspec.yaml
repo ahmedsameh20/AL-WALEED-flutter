@@ -41,6 +41,7 @@ dependencies:
   path: ^1.9.0
   shared_preferences: ^2.5.3
   crypto: ^3.0.7
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:

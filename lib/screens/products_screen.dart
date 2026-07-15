@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../db/product_dao.dart';
 import '../l10n/app_strings.dart';
 import '../models/product.dart';
+import '../utils/app_settings.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -21,6 +22,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   late Future<List<Product>> _productsFuture;
 
   bool get _isCups => _type == 'أكواب';
+  double get _lowStockThreshold => AppSettings.instance.lowStockThreshold;
 
   @override
   void initState() {
@@ -322,8 +324,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
+                    final isLowStock = !product.isCups && product.quantity <= _lowStockThreshold;
                     return Card(
                       margin: const EdgeInsets.only(bottom: 10),
+                      color: isLowStock ? Colors.red.shade50 : null,
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Column(
@@ -337,6 +341,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 ),
+                                if (isLowStock) ...[
+                                  Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 18),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    S.t('low_stock_badge'),
+                                    style: TextStyle(color: Colors.red.shade700, fontSize: 12, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
                                 Chip(label: Text(S.productType(product.type))),
                               ],
                             ),

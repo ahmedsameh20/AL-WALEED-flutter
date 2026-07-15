@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../db/product_dao.dart';
 import '../l10n/app_strings.dart';
 import '../utils/app_session.dart';
+import '../utils/app_settings.dart';
 import '../widgets/dashboard_tile.dart';
 import 'blends_screen.dart';
 import 'employees_screen.dart';
@@ -67,7 +69,45 @@ class OwnerDashboard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              FutureBuilder(
+                future: ProductDAO.getAll(),
+                builder: (context, snapshot) {
+                  final products = snapshot.data ?? [];
+                  final threshold = AppSettings.instance.lowStockThreshold;
+                  final lowStockCount =
+                      products.where((p) => !p.isCups && p.quantity <= threshold).length;
+                  if (lowStockCount == 0) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Material(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(14),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(14),
+                        onTap: () => _open(context, const ProductsScreen()),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          child: Row(
+                            children: [
+                              Icon(Icons.warning_amber_rounded, color: Colors.red.shade700),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  '${S.t('low_stock_banner_prefix')} $lowStockCount ${S.t('low_stock_banner_suffix')}',
+                                  style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Icon(Icons.chevron_left, color: Colors.red.shade700),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
               DashboardSection(
                 title: S.t('section_operations'),
                 tiles: [

@@ -23,10 +23,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     text: AppSettings.instance.vatRate.toStringAsFixed(0),
   );
   String? _vatStatus;
+  late final _lowStockController = TextEditingController(
+    text: AppSettings.instance.lowStockThreshold.toStringAsFixed(0),
+  );
+  String? _lowStockStatus;
 
   @override
   void dispose() {
     _vatRateController.dispose();
+    _lowStockController.dispose();
     super.dispose();
   }
 
@@ -85,11 +90,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _vatStatus = S.t('vat_rate_saved'));
   }
 
+  Future<void> _saveLowStockThreshold() async {
+    final threshold = double.tryParse(_lowStockController.text.trim());
+    if (threshold == null || threshold < 0) {
+      setState(() => _lowStockStatus = S.t('err_invalid_threshold'));
+      return;
+    }
+    await AppSettings.instance.setLowStockThreshold(threshold);
+    if (!mounted) return;
+    setState(() => _lowStockStatus = S.t('threshold_saved'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(S.t('settings_title'))),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -140,6 +156,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
             if (_vatStatus != null) ...[
               const SizedBox(height: 8),
               Text(_vatStatus!, textAlign: TextAlign.center),
+            ],
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 16),
+            Text(S.t('low_stock_threshold_label'), style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(S.t('low_stock_threshold_hint'), style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _lowStockController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(border: OutlineInputBorder()),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6D4C41),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  ),
+                  onPressed: _saveLowStockThreshold,
+                  child: Text(S.t('save_threshold')),
+                ),
+              ],
+            ),
+            if (_lowStockStatus != null) ...[
+              const SizedBox(height: 8),
+              Text(_lowStockStatus!, textAlign: TextAlign.center),
             ],
             const SizedBox(height: 24),
             const Divider(),

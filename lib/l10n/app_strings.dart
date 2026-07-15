@@ -398,6 +398,23 @@ class S {
     },
     'vat_rate_saved': {'ar': 'تم حفظ نسبة الضريبة.', 'en': 'VAT rate saved.'},
 
+    // Low stock
+    'low_stock_title': {'ar': 'تنبيه: مخزون منخفض', 'en': 'Low Stock Alert'},
+    'low_stock_threshold_label': {'ar': 'حد المخزون المنخفض', 'en': 'Low Stock Threshold'},
+    'low_stock_threshold_hint': {
+      'ar': 'تنبيه عند وصول كمية منتج إلى هذا الحد أو أقل',
+      'en': 'Alert when a product quantity drops to this or below',
+    },
+    'save_threshold': {'ar': 'حفظ الحد', 'en': 'Save Threshold'},
+    'err_invalid_threshold': {
+      'ar': 'أدخل رقمًا صحيحًا أكبر من أو يساوي صفر',
+      'en': 'Enter a valid number (0 or greater)',
+    },
+    'threshold_saved': {'ar': 'تم حفظ الحد.', 'en': 'Threshold saved.'},
+    'low_stock_badge': {'ar': 'مخزون منخفض', 'en': 'Low stock'},
+    'low_stock_banner_prefix': {'ar': 'تنبيه: مخزون منخفض على', 'en': 'Low stock on'},
+    'low_stock_banner_suffix': {'ar': 'منتج', 'en': 'product(s)'},
+
     // Promo codes
     'promo_codes_title': {'ar': 'أكواد الخصم', 'en': 'Promo Codes'},
     'add_promo_code': {'ar': 'إضافة كود', 'en': 'Add Code'},

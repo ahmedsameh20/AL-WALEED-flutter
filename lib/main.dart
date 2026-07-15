@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_strings.dart';
 import 'screens/login_screen.dart';
 import 'utils/app_settings.dart';
+import 'utils/notification_service.dart';
 
 void main() {
   runApp(const AlWaleedApp());
@@ -23,6 +24,7 @@ class _AlWaleedAppState extends State<AlWaleedApp> {
     LocaleController.instance.addListener(_onLocaleChanged);
     LocaleController.instance.load();
     AppSettings.instance.load();
+    NotificationService.instance.init();
   }
 
   @override

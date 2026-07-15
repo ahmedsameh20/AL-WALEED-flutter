@@ -1,5 +1,7 @@
+import '../l10n/app_strings.dart';
 import '../models/order_item.dart';
 import '../utils/app_settings.dart';
+import '../utils/notification_service.dart';
 import 'db_helper.dart';
 
 class OrderService {
@@ -22,8 +24,11 @@ class OrderService {
     final taxAmount = taxableAmount * taxRate / 100;
     final total = taxableAmount + taxAmount;
 
+    final lowStockAlerts = <Map<String, Object?>>[];
+    final threshold = AppSettings.instance.lowStockThreshold;
+
     try {
-      return await db.transaction<int>((txn) async {
+      final orderId = await db.transaction<int>((txn) async {
         for (final item in items) {
           final rows = await txn.query(
             'products',
@@ -67,10 +72,34 @@ class OrderService {
             'UPDATE products SET quantity = quantity - ?, sold_quantity = sold_quantity + ? WHERE id = ?',
             [item.quantity, item.quantity, item.productId],
           );
+
+          final updated = await txn.query(
+            'products',
+            columns: ['quantity', 'type'],
+            where: 'id = ?',
+            whereArgs: [item.productId],
+          );
+          if (updated.isNotEmpty) {
+            final newQty = (updated.first['quantity'] as num?)?.toDouble() ?? 0;
+            final type = updated.first['type'] as String? ?? '';
+            if (type != 'أكواب' && newQty <= threshold) {
+              lowStockAlerts.add({'name': item.productName, 'quantity': newQty});
+            }
+          }
         }
 
         return orderId;
       });
+
+      for (final alert in lowStockAlerts) {
+        await NotificationService.instance.showLowStock(
+          alert['name'].hashCode,
+          S.t('low_stock_title'),
+          '${alert['name']} — ${S.t('remaining_label')}: ${(alert['quantity'] as double).toStringAsFixed(2)}',
+        );
+      }
+
+      return orderId;
     } catch (_) {
       return -1;
     }
