@@ -6,6 +6,7 @@ import 'employees_screen.dart';
 import 'expenses_screen.dart';
 import 'invoices_screen.dart';
 import 'login_screen.dart';
+import 'logs_screen.dart';
 import 'orders_screen.dart';
 import 'products_screen.dart';
 import 'profit_report_screen.dart';
@@ -102,6 +103,15 @@ class OwnerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ProfitReportScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.history,
+              label: '📜 السجل',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const LogsScreen()),
                 );
               },
             ),
