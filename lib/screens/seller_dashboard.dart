@@ -6,6 +6,7 @@ import 'blends_screen.dart';
 import 'expenses_screen.dart';
 import 'invoices_screen.dart';
 import 'login_screen.dart';
+import 'notes_screen.dart';
 import 'orders_screen.dart';
 
 class SellerDashboard extends StatelessWidget {
@@ -72,6 +73,15 @@ class SellerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.chat_bubble_outline,
+              label: '📌 المحادثة',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const NotesScreen()),
                 );
               },
             ),
