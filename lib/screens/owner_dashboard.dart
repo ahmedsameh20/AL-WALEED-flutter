@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../utils/app_session.dart';
+import '../widgets/dashboard_button.dart';
 import 'employees_screen.dart';
 import 'login_screen.dart';
+import 'orders_screen.dart';
 import 'products_screen.dart';
 
 class OwnerDashboard extends StatelessWidget {
@@ -36,34 +38,32 @@ class OwnerDashboard extends StatelessWidget {
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6D4C41),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
+            DashboardButton(
+              icon: Icons.receipt_long,
+              label: '🧾 تسجيل الطلب',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.inventory_2,
+              label: '📦 المنتجات',
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ProductsScreen()),
                 );
               },
-              icon: const Icon(Icons.inventory_2),
-              label: const Text('📦 المنتجات'),
             ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6D4C41),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
+            DashboardButton(
+              icon: Icons.groups,
+              label: '👷‍♂️ الموظفين',
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const EmployeesScreen()),
                 );
               },
-              icon: const Icon(Icons.groups),
-              label: const Text('👷‍♂️ الموظفين'),
             ),
           ],
         ),

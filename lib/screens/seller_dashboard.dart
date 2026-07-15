@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../utils/app_session.dart';
+import '../widgets/dashboard_button.dart';
 import 'login_screen.dart';
+import 'orders_screen.dart';
 
 class SellerDashboard extends StatelessWidget {
   const SellerDashboard({super.key});
@@ -23,11 +25,27 @@ class SellerDashboard extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Text(
-          'أهلاً ${AppSession.instance.currentEmployeeName} (عامل)\nقيد الإنشاء...',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'أهلاً ${AppSession.instance.currentEmployeeName} (عامل)',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 24),
+            DashboardButton(
+              icon: Icons.receipt_long,
+              label: '🧾 تسجيل الطلب',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
