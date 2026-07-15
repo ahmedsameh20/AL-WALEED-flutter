@@ -38,6 +38,18 @@ class S {
   /// Displays a stored product `type` value ('بن' / 'أكواب' / 'توليفة')
   /// translated for the current language. The underlying stored value is
   /// never changed, since it's used in queries/comparisons.
+  static String paymentMethod(String method) {
+    switch (method) {
+      case 'card':
+        return t('payment_card');
+      case 'wallet':
+        return t('payment_wallet');
+      case 'cash':
+      default:
+        return t('payment_cash');
+    }
+  }
+
   static String productType(String dbType) {
     switch (dbType) {
       case 'بن':
@@ -199,6 +211,10 @@ class S {
     'discount_label': {'ar': 'الخصم', 'en': 'Discount'},
     'invalid_promo_code': {'ar': 'كود الخصم غير صالح', 'en': 'Invalid promo code'},
     'promo_code_applied': {'ar': 'تم تطبيق كود الخصم.', 'en': 'Promo code applied.'},
+    'payment_method_label': {'ar': 'طريقة الدفع', 'en': 'Payment Method'},
+    'payment_cash': {'ar': 'نقدًا', 'en': 'Cash'},
+    'payment_card': {'ar': 'بطاقة', 'en': 'Card'},
+    'payment_wallet': {'ar': 'محفظة إلكترونية', 'en': 'Mobile Wallet'},
     'total': {'ar': 'الإجمالي', 'en': 'Total'},
     'confirm_order': {'ar': 'تأكيد الطلب', 'en': 'Confirm Order'},
     'err_select_product': {'ar': 'اختر منتجًا', 'en': 'Select a product'},

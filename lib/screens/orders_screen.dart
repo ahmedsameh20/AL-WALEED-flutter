@@ -28,6 +28,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   final List<OrderItem> _cart = [];
   bool _submitting = false;
   PromoCode? _appliedCode;
+  String _paymentMethod = 'cash';
 
   @override
   void initState() {
@@ -148,6 +149,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       items: _cart,
       discountCode: _appliedCode?.code,
       discountAmount: _discountAmount,
+      paymentMethod: _paymentMethod,
     );
 
     if (!mounted) return;
@@ -161,6 +163,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         _phoneController.clear();
         _promoCodeController.clear();
         _appliedCode = null;
+        _paymentMethod = 'cash';
         _productsFuture = ProductDAO.getAll();
       });
     } else {
@@ -285,6 +288,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           child: Text(_appliedCode == null ? S.t('apply_code') : S.t('remove_code')),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: SegmentedButton<String>(
+                        segments: [
+                          ButtonSegment(value: 'cash', label: Text(S.t('payment_cash'))),
+                          ButtonSegment(value: 'card', label: Text(S.t('payment_card'))),
+                          ButtonSegment(value: 'wallet', label: Text(S.t('payment_wallet'))),
+                        ],
+                        selected: {_paymentMethod},
+                        onSelectionChanged: (selection) => setState(() => _paymentMethod = selection.first),
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Row(

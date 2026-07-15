@@ -7,6 +7,7 @@ class InvoiceSummary {
   final double taxRate;
   final double taxAmount;
   final double total;
+  final String paymentMethod;
   final String customerName;
   final String phone;
   final String employeeName;
@@ -23,6 +24,7 @@ class InvoiceSummary {
     required this.taxRate,
     required this.taxAmount,
     required this.total,
+    required this.paymentMethod,
     required this.customerName,
     required this.phone,
     required this.employeeName,
@@ -41,6 +43,7 @@ class InvoiceSummary {
       taxRate: (map['tax_rate'] as num?)?.toDouble() ?? 0,
       taxAmount: (map['tax_amount'] as num?)?.toDouble() ?? 0,
       total: (map['total_price'] as num?)?.toDouble() ?? 0,
+      paymentMethod: map['payment_method'] as String? ?? 'cash',
       customerName: map['customer_name'] as String? ?? '',
       phone: map['customer_phone'] as String? ?? '',
       employeeName: map['employee_name'] as String? ?? '',

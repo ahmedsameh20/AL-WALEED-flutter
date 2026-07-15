@@ -18,6 +18,7 @@ class InvoiceDAO {
         o.tax_rate AS tax_rate,
         o.tax_amount AS tax_amount,
         o.total_price AS total_price,
+        o.payment_method AS payment_method,
         o.customer_name AS customer_name,
         o.customer_phone AS customer_phone,
         o.employee_name AS employee_name,

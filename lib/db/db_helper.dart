@@ -20,7 +20,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE employees (
@@ -63,6 +63,7 @@ class DBHelper {
             tax_rate REAL DEFAULT 0,
             tax_amount REAL DEFAULT 0,
             total_price REAL,
+            payment_method TEXT DEFAULT 'cash',
             note TEXT,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             created_at TEXT DEFAULT (datetime('now'))
@@ -149,6 +150,9 @@ class DBHelper {
         }
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 5) {
+          await db.execute("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'cash'");
+        }
         if (oldVersion < 4) {
           await db.execute('ALTER TABLE orders ADD COLUMN discount_code TEXT');
           await db.execute('ALTER TABLE orders ADD COLUMN discount_amount REAL DEFAULT 0');

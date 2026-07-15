@@ -13,6 +13,7 @@ class OrderService {
     String note = '',
     String? discountCode,
     double discountAmount = 0,
+    String paymentMethod = 'cash',
   }) async {
     final db = await DBHelper.instance.database;
     final subtotal = items.fold<double>(0, (sum, item) => sum + item.totalPrice);
@@ -49,6 +50,7 @@ class OrderService {
           'tax_rate': taxRate,
           'tax_amount': taxAmount,
           'total_price': total,
+          'payment_method': paymentMethod,
           'note': note,
         });
 

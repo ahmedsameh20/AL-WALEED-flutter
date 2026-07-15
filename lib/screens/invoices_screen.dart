@@ -139,6 +139,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                     style: const TextStyle(fontFamily: 'monospace'),
                   ),
                   Text('${S.t('total')}: ${invoice.total.toStringAsFixed(2)} ${S.t('currency')}', style: const TextStyle(fontFamily: 'monospace')),
+                  Text('${S.t('payment_method_label')}: ${S.paymentMethod(invoice.paymentMethod)}', style: const TextStyle(fontFamily: 'monospace')),
                   Text('${S.t('notes_label')}: ${invoice.note}', style: const TextStyle(fontFamily: 'monospace')),
                   const SizedBox(height: 20),
                   Text(
@@ -210,7 +211,17 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                               ],
                             ),
                             const SizedBox(height: 4),
-                            Text('${invoice.date} ${invoice.time}', style: const TextStyle(color: Colors.grey)),
+                            Row(
+                              children: [
+                                Text('${invoice.date} ${invoice.time}', style: const TextStyle(color: Colors.grey)),
+                                const SizedBox(width: 8),
+                                Chip(
+                                  label: Text(S.paymentMethod(invoice.paymentMethod), style: const TextStyle(fontSize: 11)),
+                                  visualDensity: VisualDensity.compact,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 6),
                             Text(invoice.itemsSummary),
                             if (invoice.taxAmount > 0 || invoice.discountAmount > 0) ...[
