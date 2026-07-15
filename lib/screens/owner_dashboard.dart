@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../utils/app_session.dart';
+import 'employees_screen.dart';
 import 'login_screen.dart';
 import 'products_screen.dart';
 
@@ -48,6 +49,21 @@ class OwnerDashboard extends StatelessWidget {
               },
               icon: const Icon(Icons.inventory_2),
               label: const Text('📦 المنتجات'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6D4C41),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const EmployeesScreen()),
+                );
+              },
+              icon: const Icon(Icons.groups),
+              label: const Text('👷‍♂️ الموظفين'),
             ),
           ],
         ),
