@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/app_session.dart';
 import '../widgets/dashboard_button.dart';
+import 'blends_screen.dart';
 import 'employees_screen.dart';
 import 'expenses_screen.dart';
 import 'invoices_screen.dart';
@@ -76,6 +77,15 @@ class OwnerDashboard extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const InvoicesScreen()),
+                );
+              },
+            ),
+            DashboardButton(
+              icon: Icons.coffee,
+              label: '🫘 توليفات البن',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const BlendsScreen()),
                 );
               },
             ),
