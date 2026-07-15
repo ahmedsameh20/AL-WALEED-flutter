@@ -46,6 +46,10 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       _showMessage(S.t('err_invalid_amount'));
       return;
     }
+    if (amount <= 0) {
+      _showMessage(S.t('err_amount_must_be_positive'));
+      return;
+    }
 
     await ExpenseDAO.insert(
       employeeId: AppSession.instance.currentEmployeeId,

@@ -115,6 +115,14 @@ class S {
       'ar': 'تأكد من إدخال كل الحقول بشكل صحيح.',
       'en': 'Make sure all fields are filled correctly.',
     },
+    'err_price_must_be_positive': {
+      'ar': 'الأسعار يجب أن تكون أكبر من صفر.',
+      'en': 'Prices must be greater than zero.',
+    },
+    'err_quantity_negative': {
+      'ar': 'الكمية لا يمكن أن تكون سالبة.',
+      'en': 'Quantity cannot be negative.',
+    },
     'product_added': {'ar': 'تم إضافة المنتج', 'en': 'Product added'},
     'product_deleted': {'ar': 'تم حذف المنتج', 'en': 'Product deleted'},
     'err_edit_fields': {
@@ -143,6 +151,14 @@ class S {
     'err_salary_must_be_number': {
       'ar': 'المرتب يجب أن يكون رقمًا.',
       'en': 'Salary must be a number.',
+    },
+    'err_salary_must_be_positive': {
+      'ar': 'المرتب يجب أن يكون أكبر من صفر.',
+      'en': 'Salary must be greater than zero.',
+    },
+    'password_optional_hint': {
+      'ar': 'اتركه فارغًا للإبقاء على كلمة السر الحالية',
+      'en': 'Leave blank to keep current password',
     },
     'employee_hired_prefix': {'ar': 'تم توظيف', 'en': 'Hired'},
     'employee_updated': {
@@ -183,6 +199,10 @@ class S {
     'err_no_products_added': {
       'ar': 'لم تقم بإضافة أي منتجات!',
       'en': "You haven't added any products!",
+    },
+    'err_invalid_phone': {
+      'ar': 'رقم الهاتف غير صالح',
+      'en': 'Invalid phone number',
     },
     'order_saved_prefix': {
       'ar': 'تم حفظ الفاتورة بنجاح (رقم',
@@ -231,6 +251,10 @@ class S {
     'note': {'ar': 'ملاحظة', 'en': 'Note'},
     'no_expenses_yet': {'ar': 'لا توجد مصروفات بعد', 'en': 'No expenses yet'},
     'err_invalid_amount': {'ar': 'المبلغ غير صالح', 'en': 'Invalid amount'},
+    'err_amount_must_be_positive': {
+      'ar': 'المبلغ يجب أن يكون أكبر من صفر.',
+      'en': 'Amount must be greater than zero.',
+    },
     'confirm_delete_expense_prefix': {'ar': 'حذف مصروف #', 'en': 'Delete expense #'},
     'confirm_delete_expense_value': {'ar': 'بقيمة', 'en': 'worth'},
     'total_expenses': {'ar': 'إجمالي المصروفات', 'en': 'Total Expenses'},

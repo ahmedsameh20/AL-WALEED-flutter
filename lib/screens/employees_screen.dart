@@ -55,17 +55,21 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     _nameController.text = employee.name;
     _salaryController.text = employee.salary.toString();
     _usernameController.text = employee.username;
-    _passwordController.text = employee.password;
+    _passwordController.clear();
     setState(() => _editingEmployeeId = employee.id);
   }
 
   Future<void> _submit() async {
+    final isEditing = _editingEmployeeId != null;
     final name = _nameController.text.trim();
     final salaryText = _salaryController.text.trim();
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (name.isEmpty || salaryText.isEmpty || username.isEmpty || password.isEmpty) {
+    if (name.isEmpty ||
+        salaryText.isEmpty ||
+        username.isEmpty ||
+        (!isEditing && password.isEmpty)) {
       _showMessage(S.t('err_all_fields_required'));
       return;
     }
@@ -75,9 +79,13 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
       _showMessage(S.t('err_salary_must_be_number'));
       return;
     }
+    if (salary <= 0) {
+      _showMessage(S.t('err_salary_must_be_positive'));
+      return;
+    }
 
     try {
-      if (_editingEmployeeId == null) {
+      if (!isEditing) {
         await EmployeeDAO.insert(name: name, salary: salary, username: username, password: password);
         _showMessage('${S.t('employee_hired_prefix')} $name');
       } else {
@@ -86,7 +94,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
           name: name,
           salary: salary,
           username: username,
-          password: password,
+          password: password.isEmpty ? null : password,
         );
         _showMessage(S.t('employee_updated'));
       }
@@ -155,7 +163,12 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                 const SizedBox(height: 10),
                 TextField(
                   controller: _passwordController,
-                  decoration: InputDecoration(labelText: S.t('password'), border: const OutlineInputBorder()),
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: S.t('password'),
+                    helperText: isEditing ? S.t('password_optional_hint') : null,
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Row(

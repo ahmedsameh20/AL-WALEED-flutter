@@ -3,7 +3,6 @@ class Employee {
   final String name;
   final double salary;
   final String username;
-  final String password;
   final bool active;
 
   const Employee({
@@ -11,7 +10,6 @@ class Employee {
     required this.name,
     required this.salary,
     required this.username,
-    required this.password,
     required this.active,
   });
 
@@ -21,7 +19,6 @@ class Employee {
       name: map['name'] as String,
       salary: (map['salary'] as num).toDouble(),
       username: map['username'] as String,
-      password: map['password'] as String,
       active: (map['active'] as int? ?? 0) == 1,
     );
   }

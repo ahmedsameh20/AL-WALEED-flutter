@@ -55,6 +55,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
       _showMessage(S.t('err_fill_fields_correctly'));
       return;
     }
+    if (buyPrice <= 0 || sellPrice <= 0) {
+      _showMessage(S.t('err_price_must_be_positive'));
+      return;
+    }
+    if (quantity < 0) {
+      _showMessage(S.t('err_quantity_negative'));
+      return;
+    }
 
     await ProductDAO.insert(
       name: name,
@@ -162,6 +170,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
                         if (name.isEmpty || buyPrice == null || sellPrice == null || initQty == null || qty == null) {
                           _showMessage(S.t('err_edit_fields'));
+                          return;
+                        }
+                        if (buyPrice <= 0 || sellPrice <= 0) {
+                          _showMessage(S.t('err_price_must_be_positive'));
+                          return;
+                        }
+                        if (initQty < 0 || qty < 0) {
+                          _showMessage(S.t('err_quantity_negative'));
                           return;
                         }
 

@@ -96,6 +96,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
       return;
     }
 
+    final phone = _phoneController.text.trim();
+    if (phone.isNotEmpty && !RegExp(r'^[0-9+\-\s]{7,15}$').hasMatch(phone)) {
+      _showMessage(S.t('err_invalid_phone'));
+      return;
+    }
+
     setState(() => _submitting = true);
 
     final employeeName = AppSession.instance.isOwner
@@ -104,7 +110,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
     final orderId = await OrderService.createOrder(
       customerName: _customerNameController.text.trim(),
-      phone: _phoneController.text.trim(),
+      phone: phone,
       employeeId: AppSession.instance.currentEmployeeId,
       employeeName: employeeName,
       items: _cart,

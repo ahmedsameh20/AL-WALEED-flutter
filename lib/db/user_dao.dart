@@ -1,3 +1,4 @@
+import '../utils/password_hasher.dart';
 import 'db_helper.dart';
 
 class Employee {
@@ -13,14 +14,21 @@ class UserDAO {
     final db = await DBHelper.instance.database;
     final rows = await db.query(
       'employees',
-      columns: ['id', 'name', 'role'],
-      where: 'username = ? AND password = ? AND active = 1',
-      whereArgs: [username.trim(), password.trim()],
+      columns: ['id', 'name', 'role', 'password', 'salt'],
+      where: 'username = ? AND active = 1',
+      whereArgs: [username.trim()],
       limit: 1,
     );
 
     if (rows.isEmpty) return null;
     final row = rows.first;
+
+    final storedHash = row['password'] as String;
+    final salt = row['salt'] as String;
+    if (!PasswordHasher.verify(password.trim(), salt, storedHash)) {
+      return null;
+    }
+
     return Employee(
       id: row['id'] as int,
       name: row['name'] as String,

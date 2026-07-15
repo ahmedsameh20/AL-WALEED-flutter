@@ -1,6 +1,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../utils/password_hasher.dart';
+
 class DBHelper {
   DBHelper._();
   static final DBHelper instance = DBHelper._();
@@ -18,7 +20,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE employees (
@@ -27,6 +29,7 @@ class DBHelper {
             salary REAL NOT NULL DEFAULT 0,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
+            salt TEXT NOT NULL,
             active INTEGER DEFAULT 1,
             invoices_count INTEGER DEFAULT 0,
             expenses_total REAL DEFAULT 0.0,
@@ -111,23 +114,40 @@ class DBHelper {
           'CREATE INDEX idx_orders_created_at ON orders(created_at);',
         );
 
-        // Seed default owner accounts (matches setup.sql)
-        await db.insert('employees', {
-          'name': 'Ahmed',
-          'salary': 10000,
-          'username': 'ahmed',
-          'password': '1234',
-          'active': 1,
-          'role': 'owner',
-        });
-        await db.insert('employees', {
-          'name': 'Sameh',
-          'salary': 10000,
-          'username': 'sameh',
-          'password': '1234',
-          'active': 1,
-          'role': 'owner',
-        });
+        // Seed default owner accounts (matches setup.sql). Passwords are
+        // salted + hashed, never stored in plain text.
+        for (final seed in [
+          {'name': 'Ahmed', 'username': 'ahmed'},
+          {'name': 'Sameh', 'username': 'sameh'},
+        ]) {
+          final salt = PasswordHasher.generateSalt();
+          await db.insert('employees', {
+            'name': seed['name'],
+            'salary': 10000,
+            'username': seed['username'],
+            'password': PasswordHasher.hash('1234', salt),
+            'salt': salt,
+            'active': 1,
+            'role': 'owner',
+          });
+        }
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE employees ADD COLUMN salt TEXT NOT NULL DEFAULT \'\'');
+          // Migrate any existing plain-text passwords to salted hashes.
+          final rows = await db.query('employees', columns: ['id', 'password']);
+          for (final row in rows) {
+            final salt = PasswordHasher.generateSalt();
+            final hashed = PasswordHasher.hash(row['password'] as String, salt);
+            await db.update(
+              'employees',
+              {'password': hashed, 'salt': salt},
+              where: 'id = ?',
+              whereArgs: [row['id']],
+            );
+          }
+        }
       },
     );
   }
