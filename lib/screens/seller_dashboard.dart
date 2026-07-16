@@ -9,6 +9,7 @@ import 'invoices_screen.dart';
 import 'login_screen.dart';
 import 'notes_screen.dart';
 import 'orders_screen.dart';
+import 'shifts_screen.dart';
 
 class SellerDashboard extends StatelessWidget {
   const SellerDashboard({super.key});
@@ -98,6 +99,11 @@ class SellerDashboard extends StatelessWidget {
                     icon: Icons.chat_bubble_outline,
                     label: S.t('nav_notes'),
                     onPressed: () => _open(context, const NotesScreen()),
+                  ),
+                  DashboardTile(
+                    icon: Icons.access_time,
+                    label: S.t('nav_shifts'),
+                    onPressed: () => _open(context, const ShiftsScreen()),
                   ),
                 ],
               ),

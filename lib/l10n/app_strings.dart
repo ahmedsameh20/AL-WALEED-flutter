@@ -106,6 +106,8 @@ class S {
     'nav_employees': {'ar': 'الموظفين', 'en': 'Employees'},
     'nav_promo_codes': {'ar': 'أكواد الخصم', 'en': 'Promo Codes'},
     'nav_customers': {'ar': 'العملاء', 'en': 'Customers'},
+    'nav_shifts': {'ar': 'ساعات العمل', 'en': 'Time Clock'},
+    'nav_shift_reports': {'ar': 'تقرير ساعات العمل', 'en': 'Shift Reports'},
     'nav_invoices': {'ar': 'الفواتير', 'en': 'Invoices'},
     'nav_blends': {'ar': 'توليفات البن', 'en': 'Coffee Blends'},
     'nav_expenses': {'ar': 'المصروفات', 'en': 'Expenses'},
@@ -449,5 +451,21 @@ class S {
     'customer_history_title': {'ar': 'سجل مشتريات العميل', 'en': 'Purchase History'},
     'no_purchase_history': {'ar': 'لا يوجد سجل مشتريات', 'en': 'No purchase history'},
     'unnamed_customer': {'ar': 'عميل بدون اسم', 'en': 'Unnamed customer'},
+
+    // Shifts / time clock
+    'shifts_title': {'ar': 'ساعات العمل', 'en': 'Time Clock'},
+    'clock_in_button': {'ar': 'بدء الوردية', 'en': 'Clock In'},
+    'clock_out_button': {'ar': 'إنهاء الوردية', 'en': 'Clock Out'},
+    'clocked_in_since': {'ar': 'بدأت الوردية الساعة', 'en': 'Clocked in since'},
+    'not_clocked_in': {'ar': 'لم تبدأ وردية بعد اليوم', 'en': 'Not clocked in'},
+    'shift_history_title': {'ar': 'سجل الورديات', 'en': 'Shift History'},
+    'duration_label': {'ar': 'المدة', 'en': 'Duration'},
+    'ongoing_label': {'ar': 'جارية', 'en': 'Ongoing'},
+    'no_shifts_yet': {'ar': 'لا توجد ورديات بعد', 'en': 'No shifts yet'},
+    'shift_reports_title': {'ar': 'تقرير ساعات العمل', 'en': 'Shift Reports'},
+    'total_hours_label': {'ar': 'إجمالي الساعات', 'en': 'Total hours'},
+    'currently_active_label': {'ar': 'في وردية الآن', 'en': 'Currently clocked in'},
+    'no_shift_data_yet': {'ar': 'لا توجد بيانات ورديات بعد', 'en': 'No shift data yet'},
+    'shifts_count_label': {'ar': 'الورديات', 'en': 'Shifts'},
   };
 }

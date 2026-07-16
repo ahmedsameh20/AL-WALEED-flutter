@@ -19,6 +19,8 @@ import 'profit_report_screen.dart';
 import 'promo_codes_screen.dart';
 import 'sales_report_screen.dart';
 import 'settings_screen.dart';
+import 'shift_reports_screen.dart';
+import 'shifts_screen.dart';
 
 class OwnerDashboard extends StatelessWidget {
   const OwnerDashboard({super.key});
@@ -151,6 +153,16 @@ class OwnerDashboard extends StatelessWidget {
                     icon: Icons.people_outline,
                     label: S.t('nav_customers'),
                     onPressed: () => _open(context, const CustomersScreen()),
+                  ),
+                  DashboardTile(
+                    icon: Icons.access_time,
+                    label: S.t('nav_shifts'),
+                    onPressed: () => _open(context, const ShiftsScreen()),
+                  ),
+                  DashboardTile(
+                    icon: Icons.schedule,
+                    label: S.t('nav_shift_reports'),
+                    onPressed: () => _open(context, const ShiftReportsScreen()),
                   ),
                 ],
               ),

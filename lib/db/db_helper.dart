@@ -20,7 +20,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE employees (
@@ -127,6 +127,17 @@ class DBHelper {
           );
         ''');
 
+        await db.execute('''
+          CREATE TABLE shifts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            employee_id INTEGER NOT NULL,
+            employee_name TEXT NOT NULL,
+            clock_in TEXT NOT NULL,
+            clock_out TEXT,
+            FOREIGN KEY (employee_id) REFERENCES employees(id)
+          );
+        ''');
+
         await db.execute(
           'CREATE INDEX idx_orders_created_at ON orders(created_at);',
         );
@@ -150,6 +161,18 @@ class DBHelper {
         }
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 6) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS shifts (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              employee_id INTEGER NOT NULL,
+              employee_name TEXT NOT NULL,
+              clock_in TEXT NOT NULL,
+              clock_out TEXT,
+              FOREIGN KEY (employee_id) REFERENCES employees(id)
+            );
+          ''');
+        }
         if (oldVersion < 5) {
           await db.execute("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'cash'");
         }
