@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../db/customer_dao.dart';
 import '../db/order_service.dart';
 import '../db/product_dao.dart';
 import '../db/promo_code_dao.dart';
@@ -121,6 +122,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   void _removeFromCart(OrderItem item) {
     setState(() => _cart.remove(item));
+  }
+
+  Future<void> _lookupCustomerByPhone(String phone) async {
+    if (phone.trim().length < 7 || _customerNameController.text.trim().isNotEmpty) return;
+    final name = await CustomerDAO.findNameByPhone(phone.trim());
+    if (!mounted || name == null || name.isEmpty) return;
+    if (_customerNameController.text.trim().isEmpty) {
+      _customerNameController.text = name;
+    }
   }
 
   Future<void> _submitOrder() async {
@@ -267,6 +277,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(labelText: S.t('phone'), border: const OutlineInputBorder()),
+                            onChanged: _lookupCustomerByPhone,
                           ),
                         ),
                       ],

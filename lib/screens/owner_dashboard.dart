@@ -6,6 +6,7 @@ import '../utils/app_session.dart';
 import '../utils/app_settings.dart';
 import '../widgets/dashboard_tile.dart';
 import 'blends_screen.dart';
+import 'customers_screen.dart';
 import 'employees_screen.dart';
 import 'expenses_screen.dart';
 import 'invoices_screen.dart';
@@ -145,6 +146,11 @@ class OwnerDashboard extends StatelessWidget {
                     icon: Icons.local_offer,
                     label: S.t('nav_promo_codes'),
                     onPressed: () => _open(context, const PromoCodesScreen()),
+                  ),
+                  DashboardTile(
+                    icon: Icons.people_outline,
+                    label: S.t('nav_customers'),
+                    onPressed: () => _open(context, const CustomersScreen()),
                   ),
                 ],
               ),

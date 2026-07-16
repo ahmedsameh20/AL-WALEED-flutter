@@ -105,6 +105,7 @@ class S {
     'nav_products': {'ar': 'المنتجات', 'en': 'Products'},
     'nav_employees': {'ar': 'الموظفين', 'en': 'Employees'},
     'nav_promo_codes': {'ar': 'أكواد الخصم', 'en': 'Promo Codes'},
+    'nav_customers': {'ar': 'العملاء', 'en': 'Customers'},
     'nav_invoices': {'ar': 'الفواتير', 'en': 'Invoices'},
     'nav_blends': {'ar': 'توليفات البن', 'en': 'Coffee Blends'},
     'nav_expenses': {'ar': 'المصروفات', 'en': 'Expenses'},
@@ -434,5 +435,19 @@ class S {
     'confirm_delete_code_prefix': {'ar': 'هل تريد حذف الكود', 'en': 'Delete the code'},
     'active_label': {'ar': 'مفعل', 'en': 'Active'},
     'inactive_label': {'ar': 'غير مفعل', 'en': 'Inactive'},
+
+    // Customers
+    'customers_title': {'ar': 'العملاء', 'en': 'Customers'},
+    'search_customers_hint': {'ar': 'بحث بالاسم أو رقم الهاتف', 'en': 'Search by name or phone'},
+    'no_customers_yet': {
+      'ar': 'لا يوجد عملاء بعد — يظهرون هنا بعد إضافة رقم هاتف في الطلبات',
+      'en': 'No customers yet — they appear here once orders include a phone number',
+    },
+    'visit_count_label': {'ar': 'عدد الزيارات', 'en': 'Visits'},
+    'total_spent_label': {'ar': 'إجمالي الإنفاق', 'en': 'Total spent'},
+    'last_visit_label': {'ar': 'آخر زيارة', 'en': 'Last visit'},
+    'customer_history_title': {'ar': 'سجل مشتريات العميل', 'en': 'Purchase History'},
+    'no_purchase_history': {'ar': 'لا يوجد سجل مشتريات', 'en': 'No purchase history'},
+    'unnamed_customer': {'ar': 'عميل بدون اسم', 'en': 'Unnamed customer'},
   };
 }
