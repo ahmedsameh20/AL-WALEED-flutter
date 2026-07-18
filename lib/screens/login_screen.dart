@@ -48,12 +48,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     setState(() => _loading = false);
 
-    if (employee == null) {
+    final isOwner = employee?.role == 'owner';
+    if (employee == null || isOwner != (_userType == 'owner')) {
       setState(() => _message = S.t('err_invalid_credentials'));
       return;
     }
 
-    final isOwner = _userType == 'owner';
     AppSession.instance.login(employee.id, employee.name, isOwner);
     await DBHelper.instance.logAction(employee.id, S.t('log_login'));
 
