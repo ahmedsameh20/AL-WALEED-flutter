@@ -8,6 +8,7 @@ class ProductDAO {
     required double buyPrice,
     required double sellPrice,
     required double quantity,
+    String barcode = '',
   }) async {
     final db = await DBHelper.instance.database;
     return db.insert('products', {
@@ -17,6 +18,7 @@ class ProductDAO {
       'sell_price': sellPrice,
       'quantity': quantity,
       'initial_quantity': quantity,
+      'barcode': barcode,
     });
   }
 
@@ -24,6 +26,18 @@ class ProductDAO {
     final db = await DBHelper.instance.database;
     final rows = await db.query('products', orderBy: 'id DESC');
     return rows.map(Product.fromMap).toList();
+  }
+
+  static Future<Product?> findByBarcode(String barcode) async {
+    final db = await DBHelper.instance.database;
+    final rows = await db.query(
+      'products',
+      where: 'barcode = ? AND barcode != \'\'',
+      whereArgs: [barcode],
+      limit: 1,
+    );
+    if (rows.isEmpty) return null;
+    return Product.fromMap(rows.first);
   }
 
   static Future<void> update({
@@ -34,6 +48,7 @@ class ProductDAO {
     required double sellPrice,
     required double initialQuantity,
     required double quantity,
+    String barcode = '',
   }) async {
     final db = await DBHelper.instance.database;
     await db.update(
@@ -45,6 +60,7 @@ class ProductDAO {
         'sell_price': sellPrice,
         'initial_quantity': initialQuantity,
         'quantity': quantity,
+        'barcode': barcode,
       },
       where: 'id = ?',
       whereArgs: [id],

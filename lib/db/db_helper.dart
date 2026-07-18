@@ -20,7 +20,7 @@ class DBHelper {
 
     return openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE employees (
@@ -46,7 +46,8 @@ class DBHelper {
             quantity REAL,
             sold_quantity REAL DEFAULT 0,
             initial_quantity REAL DEFAULT 0,
-            type TEXT
+            type TEXT,
+            barcode TEXT
           );
         ''');
 
@@ -161,6 +162,9 @@ class DBHelper {
         }
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 7) {
+          await db.execute('ALTER TABLE products ADD COLUMN barcode TEXT');
+        }
         if (oldVersion < 6) {
           await db.execute('''
             CREATE TABLE IF NOT EXISTS shifts (

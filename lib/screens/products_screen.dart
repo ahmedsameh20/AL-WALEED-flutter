@@ -4,6 +4,7 @@ import '../db/product_dao.dart';
 import '../l10n/app_strings.dart';
 import '../models/product.dart';
 import '../utils/app_settings.dart';
+import 'barcode_scanner_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -17,6 +18,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   final _buyPriceController = TextEditingController();
   final _sellPriceController = TextEditingController();
   final _quantityController = TextEditingController();
+  final _barcodeController = TextEditingController();
 
   String _type = 'بن';
   late Future<List<Product>> _productsFuture;
@@ -36,7 +38,17 @@ class _ProductsScreenState extends State<ProductsScreen> {
     _buyPriceController.dispose();
     _sellPriceController.dispose();
     _quantityController.dispose();
+    _barcodeController.dispose();
     super.dispose();
+  }
+
+  Future<void> _scanInto(TextEditingController controller) async {
+    final code = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
+    );
+    if (code != null && code.isNotEmpty) {
+      controller.text = code;
+    }
   }
 
   void _refresh() {
@@ -72,12 +84,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
       buyPrice: buyPrice,
       sellPrice: sellPrice,
       quantity: quantity,
+      barcode: _barcodeController.text.trim(),
     );
 
     _nameController.clear();
     _buyPriceController.clear();
     _sellPriceController.clear();
     _quantityController.clear();
+    _barcodeController.clear();
     _showMessage(S.t('product_added'));
     _refresh();
   }
@@ -94,6 +108,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     final sellController = TextEditingController(text: product.sellPrice.toString());
     final initQtyController = TextEditingController(text: product.initialQuantity.toString());
     final qtyController = TextEditingController(text: product.quantity.toString());
+    final barcodeController = TextEditingController(text: product.barcode);
     String type = product.type;
 
     await showModalBottomSheet(
@@ -155,6 +170,30 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     decoration: InputDecoration(labelText: S.t('remaining_quantity'), border: const OutlineInputBorder()),
                   ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: barcodeController,
+                          decoration: InputDecoration(labelText: S.t('barcode_label'), border: const OutlineInputBorder()),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      OutlinedButton.icon(
+                        onPressed: () async {
+                          final code = await Navigator.of(sheetContext).push<String>(
+                            MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
+                          );
+                          if (code != null && code.isNotEmpty) {
+                            setSheetState(() => barcodeController.text = code);
+                          }
+                        },
+                        icon: const Icon(Icons.qr_code_scanner),
+                        label: Text(S.t('scan_button')),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -191,6 +230,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           sellPrice: sellPrice,
                           initialQuantity: initQty,
                           quantity: qty,
+                          barcode: barcodeController.text.trim(),
                         );
 
                         if (sheetContext.mounted) Navigator.of(sheetContext).pop();
@@ -289,6 +329,23 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   enabled: !_isCups,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(labelText: S.t('quantity'), border: const OutlineInputBorder()),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _barcodeController,
+                        decoration: InputDecoration(labelText: S.t('barcode_label'), border: const OutlineInputBorder()),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    OutlinedButton.icon(
+                      onPressed: () => _scanInto(_barcodeController),
+                      icon: const Icon(Icons.qr_code_scanner),
+                      label: Text(S.t('scan_button')),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 SizedBox(

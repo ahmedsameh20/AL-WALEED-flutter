@@ -43,6 +43,9 @@ dependencies:
   crypto: ^3.0.7
   flutter_local_notifications: ^18.0.1
   fl_chart: ^0.69.2
+  mobile_scanner: ^5.2.3
+  print_bluetooth_thermal: ^1.1.4
+  esc_pos_utils_plus: ^2.0.4
 
 dev_dependencies:
   flutter_test:

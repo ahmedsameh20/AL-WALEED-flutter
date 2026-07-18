@@ -10,6 +10,7 @@ import '../models/product.dart';
 import '../models/promo_code.dart';
 import '../utils/app_session.dart';
 import '../utils/app_settings.dart';
+import 'barcode_scanner_screen.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -124,6 +125,25 @@ class _OrdersScreenState extends State<OrdersScreen> {
     setState(() => _cart.remove(item));
   }
 
+  Future<void> _scanProduct(List<Product> products) async {
+    final code = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
+    );
+    if (code == null || code.isEmpty) return;
+
+    final match = await ProductDAO.findByBarcode(code);
+    if (!mounted) return;
+    if (match == null) {
+      _showMessage(S.t('err_product_not_found_for_barcode'));
+      return;
+    }
+    final product = products.where((p) => p.id == match.id).isNotEmpty
+        ? products.firstWhere((p) => p.id == match.id)
+        : match;
+    setState(() => _selectedProduct = product);
+    _showMessage('${S.t('product_found_prefix')} ${product.name}');
+  }
+
   Future<void> _lookupCustomerByPhone(String phone) async {
     if (phone.trim().length < 7 || _customerNameController.text.trim().isNotEmpty) return;
     final name = await CustomerDAO.findNameByPhone(phone.trim());
@@ -199,13 +219,25 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    DropdownButtonFormField<Product>(
-                      value: _selectedProduct,
-                      decoration: InputDecoration(labelText: S.t('product'), border: const OutlineInputBorder()),
-                      items: products
-                          .map((p) => DropdownMenuItem(value: p, child: Text('${p.name} (${p.sellPrice})')))
-                          .toList(),
-                      onChanged: (value) => setState(() => _selectedProduct = value),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<Product>(
+                            value: _selectedProduct,
+                            decoration: InputDecoration(labelText: S.t('product'), border: const OutlineInputBorder()),
+                            items: products
+                                .map((p) => DropdownMenuItem(value: p, child: Text('${p.name} (${p.sellPrice})')))
+                                .toList(),
+                            onChanged: (value) => setState(() => _selectedProduct = value),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton.filled(
+                          style: IconButton.styleFrom(backgroundColor: const Color(0xFF6D4C41)),
+                          onPressed: () => _scanProduct(products),
+                          icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     Row(

@@ -5,6 +5,7 @@ import '../l10n/app_strings.dart';
 import '../utils/app_session.dart';
 import '../utils/app_settings.dart';
 import 'owner_dashboard.dart';
+import 'printer_selection_screen.dart';
 import 'seller_dashboard.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -189,6 +190,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 8),
               Text(_lowStockStatus!, textAlign: TextAlign.center),
             ],
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 16),
+            Text(S.t('connected_printer_label'), style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            AnimatedBuilder(
+              animation: AppSettings.instance,
+              builder: (context, _) {
+                final name = AppSettings.instance.printerName;
+                return Row(
+                  children: [
+                    Icon(Icons.print, color: name != null ? const Color(0xFF6D4C41) : Colors.grey),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(name ?? S.t('no_printer_selected'))),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const PrinterSelectionScreen()),
+                      ),
+                      child: Text(S.t('select_printer_title')),
+                    ),
+                    if (name != null)
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        tooltip: S.t('forget_printer'),
+                        onPressed: () => AppSettings.instance.clearPrinter(),
+                      ),
+                  ],
+                );
+              },
+            ),
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 16),

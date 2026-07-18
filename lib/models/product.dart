@@ -6,6 +6,7 @@ class Product {
   final double sellPrice;
   final double quantity;
   final double initialQuantity;
+  final String barcode;
 
   const Product({
     required this.id,
@@ -15,6 +16,7 @@ class Product {
     required this.sellPrice,
     required this.quantity,
     required this.initialQuantity,
+    this.barcode = '',
   });
 
   bool get isCups => type == 'أكواب';
@@ -32,6 +34,7 @@ class Product {
       sellPrice: (map['sell_price'] as num).toDouble(),
       quantity: (map['quantity'] as num?)?.toDouble() ?? 0,
       initialQuantity: (map['initial_quantity'] as num?)?.toDouble() ?? 0,
+      barcode: map['barcode'] as String? ?? '',
     );
   }
 }

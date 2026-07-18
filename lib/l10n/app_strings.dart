@@ -467,5 +467,37 @@ class S {
     'currently_active_label': {'ar': 'في وردية الآن', 'en': 'Currently clocked in'},
     'no_shift_data_yet': {'ar': 'لا توجد بيانات ورديات بعد', 'en': 'No shift data yet'},
     'shifts_count_label': {'ar': 'الورديات', 'en': 'Shifts'},
+
+    // Barcode scanning
+    'scan_barcode_title': {'ar': 'مسح الباركود', 'en': 'Scan Barcode'},
+    'scan_barcode_hint': {
+      'ar': 'وجّه الكاميرا نحو الباركود',
+      'en': 'Point the camera at a barcode',
+    },
+    'barcode_label': {'ar': 'الباركود (اختياري)', 'en': 'Barcode (optional)'},
+    'scan_button': {'ar': 'مسح', 'en': 'Scan'},
+    'err_product_not_found_for_barcode': {
+      'ar': 'لا يوجد منتج بهذا الباركود',
+      'en': 'No product matches this barcode',
+    },
+    'product_found_prefix': {'ar': 'تم العثور على:', 'en': 'Found:'},
+
+    // Bluetooth receipt printing
+    'print_to_printer': {'ar': 'طباعة على الطابعة', 'en': 'Print to Printer'},
+    'select_printer_title': {'ar': 'اختر طابعة بلوتوث', 'en': 'Select Bluetooth Printer'},
+    'no_paired_printers': {
+      'ar': 'لا توجد طابعات مقترنة. قم بإقران طابعة بلوتوث من إعدادات الجهاز أولًا.',
+      'en': 'No paired printers. Pair a Bluetooth printer in device settings first.',
+    },
+    'printing_in_progress': {'ar': 'جارٍ الطباعة...', 'en': 'Printing...'},
+    'print_success': {'ar': 'تمت الطباعة بنجاح.', 'en': 'Printed successfully.'},
+    'print_failed': {'ar': 'فشلت الطباعة. تأكد من اتصال الطابعة.', 'en': 'Print failed. Check the printer connection.'},
+    'forget_printer': {'ar': 'نسيان الطابعة', 'en': 'Forget Printer'},
+    'connected_printer_label': {'ar': 'الطابعة المتصلة', 'en': 'Connected Printer'},
+    'no_printer_selected': {'ar': 'لم يتم اختيار طابعة', 'en': 'No printer selected'},
+    'bluetooth_permission_denied': {
+      'ar': 'يلزم إذن البلوتوث لاستخدام الطابعة',
+      'en': 'Bluetooth permission is required to use the printer',
+    },
   };
 }

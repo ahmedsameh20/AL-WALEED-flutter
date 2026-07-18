@@ -4,6 +4,9 @@ import '../db/invoice_dao.dart';
 import '../l10n/app_strings.dart';
 import '../models/invoice_summary.dart';
 import '../utils/app_session.dart';
+import '../utils/app_settings.dart';
+import '../utils/printer_service.dart';
+import 'printer_selection_screen.dart';
 
 class InvoicesScreen extends StatefulWidget {
   const InvoicesScreen({super.key});
@@ -89,6 +92,25 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       await InvoiceDAO.delete(invoice.id);
       _refresh();
     }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _printToPrinter(InvoiceSummary invoice) async {
+    if (AppSettings.instance.printerMac == null) {
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const PrinterSelectionScreen()),
+      );
+      if (!mounted || AppSettings.instance.printerMac == null) return;
+    }
+
+    _showMessage(S.t('printing_in_progress'));
+    final items = await InvoiceDAO.getItemLines(invoice.id);
+    final success = await PrinterService.instance.printInvoice(invoice: invoice, items: items);
+    if (!mounted) return;
+    _showMessage(success ? S.t('print_success') : S.t('print_failed'));
   }
 
   Future<void> _showPrintPreview(InvoiceSummary invoice) async {
@@ -249,6 +271,11 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                                   onPressed: () => _showPrintPreview(invoice),
                                   icon: const Icon(Icons.print, size: 18),
                                   label: Text(S.t('print_button')),
+                                ),
+                                TextButton.icon(
+                                  onPressed: () => _printToPrinter(invoice),
+                                  icon: const Icon(Icons.bluetooth, size: 18),
+                                  label: Text(S.t('print_to_printer')),
                                 ),
                                 if (_isOwner)
                                   IconButton(
