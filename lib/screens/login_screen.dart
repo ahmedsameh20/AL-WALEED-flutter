@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../db/db_helper.dart';
 import '../db/user_dao.dart';
 import '../l10n/app_strings.dart';
 import '../utils/app_session.dart';
@@ -54,7 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final isOwner = _userType == 'owner';
     AppSession.instance.login(employee.id, employee.name, isOwner);
+    await DBHelper.instance.logAction(employee.id, S.t('log_login'));
 
+    if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => isOwner ? const OwnerDashboard() : const SellerDashboard(),

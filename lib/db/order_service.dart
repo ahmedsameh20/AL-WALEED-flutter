@@ -99,6 +99,11 @@ class OrderService {
         );
       }
 
+      await DBHelper.instance.logAction(
+        employeeId,
+        '${S.t('log_created_order')} $customerName (${total.toStringAsFixed(2)})',
+      );
+
       return orderId;
     } catch (_) {
       return -1;

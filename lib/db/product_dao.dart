@@ -1,4 +1,6 @@
+import '../l10n/app_strings.dart';
 import '../models/product.dart';
+import '../utils/app_session.dart';
 import 'db_helper.dart';
 
 class ProductDAO {
@@ -11,7 +13,7 @@ class ProductDAO {
     String barcode = '',
   }) async {
     final db = await DBHelper.instance.database;
-    return db.insert('products', {
+    final id = await db.insert('products', {
       'name': name,
       'type': type,
       'buy_price': buyPrice,
@@ -20,6 +22,11 @@ class ProductDAO {
       'initial_quantity': quantity,
       'barcode': barcode,
     });
+    await DBHelper.instance.logAction(
+      AppSession.instance.currentEmployeeId,
+      '${S.t('log_added_product')} $name',
+    );
+    return id;
   }
 
   static Future<List<Product>> getAll() async {
@@ -65,10 +72,20 @@ class ProductDAO {
       where: 'id = ?',
       whereArgs: [id],
     );
+    await DBHelper.instance.logAction(
+      AppSession.instance.currentEmployeeId,
+      '${S.t('log_updated_product')} $name',
+    );
   }
 
   static Future<void> delete(int id) async {
     final db = await DBHelper.instance.database;
+    final rows = await db.query('products', columns: ['name'], where: 'id = ?', whereArgs: [id]);
+    final name = rows.isNotEmpty ? rows.first['name'] as String : '#$id';
     await db.delete('products', where: 'id = ?', whereArgs: [id]);
+    await DBHelper.instance.logAction(
+      AppSession.instance.currentEmployeeId,
+      '${S.t('log_deleted_product')} $name',
+    );
   }
 }

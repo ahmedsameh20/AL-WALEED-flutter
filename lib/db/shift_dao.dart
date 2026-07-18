@@ -1,4 +1,6 @@
+import '../l10n/app_strings.dart';
 import '../models/shift.dart';
+import '../utils/app_session.dart';
 import 'db_helper.dart';
 
 class ShiftDAO {
@@ -22,6 +24,7 @@ class ShiftDAO {
       'employee_name': employeeName,
       'clock_in': DateTime.now().toIso8601String(),
     });
+    await DBHelper.instance.logAction(employeeId, S.t('log_clocked_in'));
   }
 
   static Future<void> clockOut(int shiftId) async {
@@ -31,6 +34,10 @@ class ShiftDAO {
       {'clock_out': DateTime.now().toIso8601String()},
       where: 'id = ?',
       whereArgs: [shiftId],
+    );
+    await DBHelper.instance.logAction(
+      AppSession.instance.currentEmployeeId,
+      S.t('log_clocked_out'),
     );
   }
 

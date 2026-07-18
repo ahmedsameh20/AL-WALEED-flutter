@@ -1,4 +1,6 @@
+import '../l10n/app_strings.dart';
 import '../models/promo_code.dart';
+import '../utils/app_session.dart';
 import 'db_helper.dart';
 
 class PromoCodeDAO {
@@ -28,12 +30,17 @@ class PromoCodeDAO {
   }) async {
     final db = await DBHelper.instance.database;
     try {
+      final normalized = code.trim().toUpperCase();
       await db.insert('promo_codes', {
-        'code': code.trim().toUpperCase(),
+        'code': normalized,
         'type': type,
         'value': value,
         'active': 1,
       });
+      await DBHelper.instance.logAction(
+        AppSession.instance.currentEmployeeId,
+        '${S.t('log_added_promo')} $normalized',
+      );
       return true;
     } catch (_) {
       return false;
@@ -42,11 +49,23 @@ class PromoCodeDAO {
 
   static Future<void> setActive(int id, bool active) async {
     final db = await DBHelper.instance.database;
+    final rows = await db.query('promo_codes', columns: ['code'], where: 'id = ?', whereArgs: [id]);
+    final code = rows.isNotEmpty ? rows.first['code'] as String : '#$id';
     await db.update('promo_codes', {'active': active ? 1 : 0}, where: 'id = ?', whereArgs: [id]);
+    await DBHelper.instance.logAction(
+      AppSession.instance.currentEmployeeId,
+      '${active ? S.t('log_activated_promo') : S.t('log_deactivated_promo')} $code',
+    );
   }
 
   static Future<void> delete(int id) async {
     final db = await DBHelper.instance.database;
+    final rows = await db.query('promo_codes', columns: ['code'], where: 'id = ?', whereArgs: [id]);
+    final code = rows.isNotEmpty ? rows.first['code'] as String : '#$id';
     await db.delete('promo_codes', where: 'id = ?', whereArgs: [id]);
+    await DBHelper.instance.logAction(
+      AppSession.instance.currentEmployeeId,
+      '${S.t('log_deleted_promo')} $code',
+    );
   }
 }
