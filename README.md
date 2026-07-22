@@ -1,4 +1,4 @@
-# AL-WALEED Coffee Manager (Flutter)
+# Elgendy Coffee Manager (Flutter)
 
 A cross-platform (Android/iOS) coffee shop management app, migrated from the original [AL-WALEED JavaFX desktop app](https://github.com/ahmedsameh20/AL-WALEED) to Flutter/Dart. Fully bilingual (Arabic/English) with native RTL support, running entirely offline on a local SQLite database.
 
